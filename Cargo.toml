@@ -6,3 +6,4 @@ description = "Pascal strings in Rust."
 license = "MIT"
 
 [dependencies]
+ascii = "0.7"
