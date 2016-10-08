@@ -1,4 +1,5 @@
 use ascii::{AsAsciiStrError, AsciiChar, AsciiStr, ToAsciiChar, ToAsciiCharError};
+use std::borrow::{Borrow, BorrowMut};
 use std::cmp::{Eq, PartialEq};
 use std::convert::{AsRef, AsMut, From, Into};
 use std::hash::{Hash, Hasher};
@@ -273,6 +274,48 @@ impl AsMut<[AsciiChar]> for PascalString {
         unsafe {
             slice::from_raw_parts_mut(self.chars.as_mut_ptr(), self.len as usize)
         }
+    }
+}
+
+impl Borrow<PascalStr> for PascalString {
+    fn borrow(&self) -> &PascalStr {
+        self.deref()
+    }
+}
+
+impl BorrowMut<PascalStr> for PascalString {
+    fn borrow_mut(&mut self) -> &mut PascalStr {
+        self.deref_mut()
+    }
+}
+
+impl Borrow<str> for PascalString {
+    fn borrow(&self) -> &str {
+        self.as_ref()
+    }
+}
+
+impl Borrow<[u8]> for PascalString {
+    fn borrow(&self) -> &[u8] {
+        self.as_ref()
+    }
+}
+
+impl Borrow<AsciiStr> for PascalString {
+    fn borrow(&self) -> &AsciiStr {
+        self.as_ref()
+    }
+}
+
+impl Borrow<[AsciiChar]> for PascalString {
+    fn borrow(&self) -> &[AsciiChar] {
+        self.as_ref()
+    }
+}
+
+impl BorrowMut<[AsciiChar]> for PascalString {
+    fn borrow_mut(&mut self) -> &mut [AsciiChar] {
+        self.as_mut()
     }
 }
 
