@@ -1,7 +1,8 @@
-use ascii::{AsAsciiStrError, AsciiChar, AsciiStr, AsciiString, ToAsciiChar, ToAsciiCharError};
+use ascii::{AsAsciiStrError, AsciiChar, AsciiStr, ToAsciiChar, ToAsciiCharError};
 use std::convert::{AsRef, AsMut, From, Into};
-use std::{fmt, ptr, slice, str};
-use ::PASCAL_STRING_BUF_SIZE;
+use std::ops::{Deref, DerefMut};
+use std::{fmt, mem, ptr, slice, str};
+use ::{PascalStr, PASCAL_STRING_BUF_SIZE};
 
 /// An owned `PascalString`. This string type stores its data the stack. It is always 256 bytes long, with
 /// the first byte storing the length.
@@ -148,21 +149,6 @@ impl PascalString {
         self.len = 0;
     }
 
-    #[inline]
-    pub fn len(&self) -> usize {
-        self.len as usize
-    }
-
-    #[inline]
-    pub fn is_empty(&self) -> bool {
-        self.len() == 0
-    }
-
-    #[inline]
-    pub fn is_full(&self) -> bool {
-        self.len() == PASCAL_STRING_BUF_SIZE
-    }
-
     /// Consumes this `PascalString`, and returns its inner state as a `[u8; 256]`, where the first byte
     /// is the length.
     ///
@@ -175,14 +161,14 @@ impl PascalString {
 
     /// Get a pointer to the first byte of the string buffer.
     #[inline]
-    pub fn as_ptr(&self) -> *const u8 {
-        &self.chars as *const _ as *const u8
+    pub fn as_ptr(&self) -> *const AsciiChar {
+        self.chars.as_ptr()
     }
 
     /// Get a mutable pointer to the first byte of the string buffer.
     #[inline]
-    pub fn as_mut_ptr(&mut self) -> *mut u8 {
-        &mut self.chars as *mut _ as *mut u8
+    pub fn as_mut_ptr(&mut self) -> *mut AsciiChar {
+        self.chars.as_mut_ptr()
     }
 }
 
@@ -216,6 +202,31 @@ impl fmt::Debug for PascalString {
 impl fmt::Display for PascalString {
     fn fmt(&self, fmtr: &mut fmt::Formatter) -> fmt::Result {
         fmtr.pad(self.as_ref())
+    }
+}
+
+impl Deref for PascalString {
+    type Target = PascalStr;
+    fn deref(&self) -> &Self::Target {
+        let ascii_str: &[AsciiChar] = self.as_ref();
+        unsafe {
+            mem::transmute(ascii_str)
+        }
+    }
+}
+
+impl DerefMut for PascalString {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        let ascii_str: &mut [AsciiChar] = self.as_mut();
+        unsafe {
+            mem::transmute(ascii_str)
+        }
+    }
+}
+
+impl AsRef<PascalStr> for PascalString {
+    fn as_ref(&self) -> &PascalStr {
+        self.deref()
     }
 }
 
