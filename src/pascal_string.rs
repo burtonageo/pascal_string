@@ -1,5 +1,6 @@
 use ascii::{AsAsciiStrError, AsciiChar, AsciiStr, ToAsciiChar, ToAsciiCharError};
 use std::convert::{AsRef, AsMut, From, Into};
+use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 use std::{fmt, mem, ptr, slice, str};
 use ::{PascalStr, PASCAL_STRING_BUF_SIZE};
@@ -190,6 +191,13 @@ impl Clone for PascalString {
             ptr::copy_nonoverlapping(&self.chars, &mut clone.chars, PASCAL_STRING_BUF_SIZE);
         }
         clone
+    }
+}
+
+impl Hash for PascalString {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        state.write_u8(self.len);
+        state.write(self.as_ref());
     }
 }
 
