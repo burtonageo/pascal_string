@@ -6,7 +6,7 @@ mod pascal_string;
 const PASCAL_STRING_BUF_SIZE: usize = 255;
 
 pub use pascal_str::PascalStr;
-pub use pascal_string::PascalString;
+pub use pascal_string::{PascalString, PascalStringError};
 
 #[cfg(test)]
 mod tests {
