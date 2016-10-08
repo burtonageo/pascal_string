@@ -160,18 +160,6 @@ impl PascalString {
     pub fn to_array(self) -> [u8; PASCAL_STRING_BUF_SIZE + 1] {
         self.into()
     }
-
-    /// Get a pointer to the first byte of the string buffer.
-    #[inline]
-    pub fn as_ptr(&self) -> *const AsciiChar {
-        self.chars.as_ptr()
-    }
-
-    /// Get a mutable pointer to the first byte of the string buffer.
-    #[inline]
-    pub fn as_mut_ptr(&mut self) -> *mut AsciiChar {
-        self.chars.as_mut_ptr()
-    }
 }
 
 impl Default for PascalString {
