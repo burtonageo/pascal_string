@@ -1,4 +1,5 @@
 use ascii::{AsAsciiStrError, AsciiChar, AsciiStr, ToAsciiChar, ToAsciiCharError};
+use std::cmp::{Eq, PartialEq};
 use std::convert::{AsRef, AsMut, From, Into};
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
@@ -191,6 +192,17 @@ impl Clone for PascalString {
             ptr::copy_nonoverlapping(&self.chars, &mut clone.chars, PASCAL_STRING_BUF_SIZE);
         }
         clone
+    }
+}
+
+impl Eq for PascalString { }
+
+impl PartialEq for PascalString {
+    fn eq(&self, other: &PascalString) -> bool {
+        if self.len != other.len {
+            return false;
+        }
+        self.chars.iter().zip(other.chars.iter()).all(|(c0, c1)| c0 == c1)
     }
 }
 
