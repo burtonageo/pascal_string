@@ -2,7 +2,9 @@ use ascii::{AsciiChar, AsciiStr};
 use std::ascii::AsciiExt;
 use std::borrow::ToOwned;
 use std::convert::AsRef;
+use std::iter::{ExactSizeIterator, Iterator};
 use std::ops::{Index, IndexMut, Range, RangeFull, RangeFrom, RangeTo};
+use std::slice::{Iter, IterMut};
 use ::{PASCAL_STRING_BUF_SIZE, PascalString};
 
 /// A borrowed slice from a `PascalString`. Does not own its data.
@@ -25,19 +27,36 @@ impl PascalStr {
         self.string.as_mut_ptr()
     }
 
+    /// Returns the number of characters used in the string.
     #[inline]
     pub fn len(&self) -> usize {
         self.string.len()
     }
 
+    /// Returns true if the string has a length of 0
     #[inline]
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
+    /// Returns true if the string has a length of 255.
+    ///
+    /// When this value is true, no more elements can be pushed onto the string.
     #[inline]
     pub fn is_full(&self) -> bool {
         self.len() == PASCAL_STRING_BUF_SIZE
+    }
+
+    /// Get an immutable iterator to the internal character array.
+    #[inline]
+    pub fn chars<'a>(&'a self) -> Chars<'a> {
+        Chars(self.string.as_slice().iter())
+    }
+
+    /// Get a mutable iterator to the internal character array.
+    #[inline]
+    pub fn chars_mut<'a>(&'a mut self) -> CharsMut<'a> {
+        CharsMut(self.string.as_mut_slice().iter_mut())
     }
 }
 
@@ -249,3 +268,36 @@ impl IndexMut<RangeTo<usize>> for PascalStr {
     }
 }
 
+/// An immutable iterator over the buffer of a `PascalStr`.
+pub struct Chars<'a>(Iter<'a, AsciiChar>);
+
+impl<'a> Iterator for Chars<'a> {
+    type Item = &'a AsciiChar;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.next()
+    }
+}
+
+impl<'a> ExactSizeIterator for Chars<'a> {
+    fn len(&self) -> usize {
+        self.0.len()
+    }
+}
+
+/// A mutable iterator over the buffer of a `PascalStr`.
+pub struct CharsMut<'a>(IterMut<'a, AsciiChar>);
+
+impl<'a> Iterator for CharsMut<'a> {
+    type Item = &'a mut AsciiChar;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.next()
+    }
+}
+
+impl<'a> ExactSizeIterator for CharsMut<'a> {
+    fn len(&self) -> usize {
+        self.0.len()
+    }
+}
