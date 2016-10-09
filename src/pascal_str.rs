@@ -1,4 +1,5 @@
 use ascii::{AsciiChar, AsciiStr};
+use std::ascii::AsciiExt;
 use std::borrow::ToOwned;
 use std::convert::AsRef;
 use std::ops::{Index, IndexMut, Range, RangeFull, RangeFrom, RangeTo};
@@ -37,6 +38,40 @@ impl PascalStr {
     #[inline]
     pub fn is_full(&self) -> bool {
         self.len() == PASCAL_STRING_BUF_SIZE
+    }
+}
+
+impl AsciiExt for PascalStr {
+    type Owned = PascalString;
+
+    fn is_ascii(&self) -> bool {
+        true
+    }
+
+    fn to_ascii_uppercase(&self) -> Self::Owned {
+        let bytes: &[u8] = self.as_ref();
+        let mut upper = PascalString::from_bytes(bytes).unwrap();
+        upper.make_ascii_uppercase();
+        upper
+    }
+
+    fn to_ascii_lowercase(&self) -> Self::Owned {
+        let bytes: &[u8] = self.as_ref();
+        let mut lower = PascalString::from_bytes(bytes).unwrap();
+        lower.make_ascii_lowercase();
+        lower
+    }
+
+    fn eq_ignore_ascii_case(&self, other: &Self) -> bool {
+        self.string.eq_ignore_ascii_case(&other.string)
+    }
+
+    fn make_ascii_uppercase(&mut self) {
+        self.string.make_ascii_uppercase()
+    }
+
+    fn make_ascii_lowercase(&mut self) {
+        self.string.make_ascii_lowercase()
     }
 }
 

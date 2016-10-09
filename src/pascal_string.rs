@@ -218,28 +218,37 @@ impl Hash for PascalString {
 
 impl AsciiExt for PascalString {
     type Owned = Self;
+
     fn is_ascii(&self) -> bool {
         true
     }
 
     fn to_ascii_uppercase(&self) -> Self::Owned {
-        unimplemented!()
+        let mut upper = self.clone();
+        upper.make_ascii_uppercase();
+        upper
     }
 
     fn to_ascii_lowercase(&self) -> Self::Owned {
-        unimplemented!()
+        let mut lower = self.clone();
+        lower.make_ascii_lowercase();
+        lower
     }
 
     fn eq_ignore_ascii_case(&self, other: &Self) -> bool {
-        unimplemented!()
+        self.chars.iter().zip(other.chars.iter()).all(|(c0, c1)| c0.eq_ignore_ascii_case(&c1))
     }
 
     fn make_ascii_uppercase(&mut self) {
-        unimplemented!()
+        for c in self.chars.iter_mut() {
+            c.make_ascii_uppercase();
+        }
     }
 
     fn make_ascii_lowercase(&mut self) {
-        unimplemented!()
+        for c in self.chars.iter_mut() {
+            c.make_ascii_lowercase();
+        }
     }
 }
 
