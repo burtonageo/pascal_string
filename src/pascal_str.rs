@@ -1,7 +1,8 @@
 use ascii::{AsciiChar, AsciiStr};
+use std::borrow::ToOwned;
 use std::convert::AsRef;
 use std::ops::{Index, IndexMut, Range, RangeFull, RangeFrom, RangeTo};
-use ::PASCAL_STRING_BUF_SIZE;
+use ::{PASCAL_STRING_BUF_SIZE, PascalString};
 
 /// A borrowed slice from a `PascalString`. Does not own its data.
 #[derive(Eq, Hash, PartialEq, PartialOrd)]
@@ -39,6 +40,25 @@ impl PascalStr {
     }
 }
 
+impl ToOwned for PascalStr {
+    type Owned = PascalString;
+    fn to_owned(&self) -> Self::Owned {
+        PascalString::from_bytes(&self.string).unwrap()
+    }
+}
+
+impl AsRef<str> for PascalStr {
+    fn as_ref(&self) -> &str {
+        self.string.as_ref()
+    }
+}
+
+impl AsRef<[u8]> for PascalStr {
+    fn as_ref(&self) -> &[u8] {
+        self.string.as_ref()
+    }
+}
+
 impl AsRef<AsciiStr> for PascalStr {
     fn as_ref(&self) -> &AsciiStr {
         &self.string
@@ -62,7 +82,6 @@ impl AsMut<[AsciiChar]> for PascalStr {
         self.string.as_mut()
     }
 }
-
 
 impl Index<u8> for PascalStr {
     type Output = AsciiChar;
