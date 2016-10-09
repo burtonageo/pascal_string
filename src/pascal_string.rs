@@ -11,8 +11,7 @@ use ::{PascalStr, PASCAL_STRING_BUF_SIZE};
 /// An owned `PascalString`. This string type stores its data the stack. It is always 256 bytes long, with
 /// the first byte storing the length.
 ///
-/// This string uses the Ascii encoding.
-#[repr(C)]
+/// This string type uses Ascii encoding.
 pub struct PascalString {
     /// The length of this string.
     len: u8,
@@ -27,6 +26,10 @@ impl PascalString {
         Default::default()
     }
 
+    /// Create a new `PascalString` using the contents of `bytes`.
+    ///
+    /// Returns an `Err` if `bytes` is longer than 255 characters, or it does not contain
+    /// Ascii encoded characters.
     #[inline]
     pub fn from_bytes<B: AsRef<[u8]>>(bytes: B) -> Result<Self, PascalStringError> {
         PascalString::_from_bytes(bytes.as_ref())
@@ -164,7 +167,10 @@ impl PascalString {
         self.into()
     }
 
-    /// Get a character in the string, which may lie beyond `len()`.
+    /// Get a character in the string, without checking if the index is within the bounds of `len()`.
+    ///
+    /// This method cannot cause memory unsafety because of the size of `index`. However, it can give access
+    /// to stale characters if `index` is greater than `len()`, and `len() < 255`.
     #[inline]
     pub fn get_unchecked(&self, index: u8) -> AsciiChar {
         self.chars[index as usize]
