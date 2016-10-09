@@ -42,7 +42,7 @@ impl PascalString {
         let mut string = PascalString::new();
         string.len = len as u8;
         for i in 0..len {
-            string.chars[i] = ascii[i];
+            string[i] = ascii[i];
         }
         Ok(string)
     }
@@ -70,7 +70,8 @@ impl PascalString {
         if self.is_full() {
             return Err(PascalStringError::OutOfBounds)
         }
-        self.chars[self.len as usize] = ch;
+        let len = self.len();
+        self[len] = ch;
         self.len += 1;
         Ok(())
     }
@@ -113,7 +114,7 @@ impl PascalString {
         assert!(self.len < index);
         let len = self.len as usize;
         let index = index as isize;
-        let c = self.chars[len];
+        let c = self[len];
         // Shift everything to the right of the removed character to the left to cover up the hole
         // left.
         unsafe {
@@ -140,7 +141,7 @@ impl PascalString {
             let ptr = self.as_mut_ptr().offset(index);
             ptr::copy(ptr, ptr.offset(1), len - index.abs() as usize - 1);
         }
-        self.chars[len] = ch;
+        self[len] = ch;
         self.len += 1;
     }
 
