@@ -1,5 +1,6 @@
 use ascii::{AsciiChar, AsciiStr};
 use std::convert::AsRef;
+use std::ops::{Index, IndexMut, Range, RangeFull, RangeFrom, RangeTo};
 use ::PASCAL_STRING_BUF_SIZE;
 
 /// A borrowed slice from a `PascalString`. Does not own its data.
@@ -61,3 +62,136 @@ impl AsMut<[AsciiChar]> for PascalStr {
         self.string.as_mut()
     }
 }
+
+
+impl Index<u8> for PascalStr {
+    type Output = AsciiChar;
+    fn index(&self, index: u8) -> &Self::Output {
+        let index = index as usize;
+        assert!(index < self.len());
+        &self.string[index]
+    }
+}
+
+impl IndexMut<u8> for PascalStr {
+    fn index_mut(&mut self, index: u8) -> &mut Self::Output {
+        let index = index as usize;
+        assert!(index < self.len());
+        &mut self.string[index]
+    }
+}
+
+impl Index<usize> for PascalStr {
+    type Output = AsciiChar;
+    fn index(&self, index: usize) -> &Self::Output {
+        assert!(index < self.len());
+        &self.string[index]
+    }
+}
+
+impl IndexMut<usize> for PascalStr {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        assert!(index < self.len());
+        &mut self.string[index]
+    }
+}
+
+impl Index<RangeFull> for PascalStr {
+    type Output = AsciiStr;
+    fn index(&self, _: RangeFull) -> &Self::Output {
+        &self.string[..]
+    }
+}
+
+impl IndexMut<RangeFull> for PascalStr {
+    fn index_mut(&mut self, _: RangeFull) -> &mut Self::Output {
+        &mut self.string[..]
+    }
+}
+
+impl Index<Range<u8>> for PascalStr {
+    type Output = AsciiStr;
+    fn index(&self, range: Range<u8>) -> &Self::Output {
+        assert!((range.end as usize) < self.len());
+        &self.string[range.start as usize..range.end as usize]
+    }
+}
+
+impl IndexMut<Range<u8>> for PascalStr {
+    fn index_mut(&mut self, range: Range<u8>) -> &mut Self::Output {
+        assert!((range.end as usize) < self.len());
+        &mut self.string[range.start as usize..range.end as usize]
+    }
+}
+
+impl Index<Range<usize>> for PascalStr {
+    type Output = AsciiStr;
+    fn index(&self, range: Range<usize>) -> &Self::Output {
+        assert!(range.end < self.len());
+        &self.string[range.start..range.end]
+    }
+}
+
+impl IndexMut<Range<usize>> for PascalStr {
+    fn index_mut(&mut self, range: Range<usize>) -> &mut Self::Output {
+        assert!(range.end < self.len());
+        &mut self.string[range.start..range.end]
+    }
+}
+
+impl Index<RangeFrom<u8>> for PascalStr {
+    type Output = AsciiStr;
+    fn index(&self, range: RangeFrom<u8>) -> &Self::Output {
+        &self.string[range.start as usize..]
+    }
+}
+
+impl IndexMut<RangeFrom<u8>> for PascalStr {
+    fn index_mut(&mut self, range: RangeFrom<u8>) -> &mut Self::Output {
+        &mut self.string[range.start as usize..]
+    }
+}
+
+impl Index<RangeFrom<usize>> for PascalStr {
+    type Output = AsciiStr;
+    fn index(&self, range: RangeFrom<usize>) -> &Self::Output {
+        &self.string[range.start..]
+    }
+}
+
+impl IndexMut<RangeFrom<usize>> for PascalStr {
+    fn index_mut(&mut self, range: RangeFrom<usize>) -> &mut Self::Output {
+        &mut self.string[range.start..]
+    }
+}
+
+impl Index<RangeTo<u8>> for PascalStr {
+    type Output = AsciiStr;
+    fn index(&self, range: RangeTo<u8>) -> &Self::Output {
+        assert!((range.end as usize) < self.len());
+        &self.string[..range.end as usize]
+    }
+}
+
+impl IndexMut<RangeTo<u8>> for PascalStr {
+    fn index_mut(&mut self, range: RangeTo<u8>) -> &mut Self::Output {
+        assert!((range.end as usize) < self.len());
+        &mut self.string[..range.end as usize]
+    }
+}
+
+impl Index<RangeTo<usize>> for PascalStr {
+    type Output = AsciiStr;
+    fn index(&self, range: RangeTo<usize>) -> &Self::Output {
+        assert!(range.end < self.len());
+        &self.string[..range.end]
+    }
+}
+
+impl IndexMut<RangeTo<usize>> for PascalStr {
+    fn index_mut(&mut self, range: RangeTo<usize>) -> &mut Self::Output {
+        assert!(range.end < self.len());
+        &mut self.string[..range.end]
+    }
+}
+
