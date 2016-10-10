@@ -222,6 +222,7 @@ impl PartialEq for PascalString {
 }
 
 impl Hash for PascalString {
+    #[inline]
     fn hash<H: Hasher>(&self, state: &mut H) {
         state.write_u8(self.len);
         state.write(self.as_ref());
@@ -248,17 +249,19 @@ impl AsciiExt for PascalString {
     }
 
     fn eq_ignore_ascii_case(&self, other: &Self) -> bool {
-        self.chars.iter().zip(other.chars.iter()).all(|(c0, c1)| c0.eq_ignore_ascii_case(&c1))
+        self.chars().zip(other.chars()).all(|(c0, c1)| c0.eq_ignore_ascii_case(&c1))
     }
 
+    #[inline]
     fn make_ascii_uppercase(&mut self) {
-        for c in self.chars.iter_mut() {
+        for c in self.chars_mut() {
             c.make_ascii_uppercase();
         }
     }
 
+    #[inline]
     fn make_ascii_lowercase(&mut self) {
-        for c in self.chars.iter_mut() {
+        for c in self.chars_mut() {
             c.make_ascii_lowercase();
         }
     }
@@ -340,42 +343,49 @@ impl AsMut<[AsciiChar]> for PascalString {
 }
 
 impl Borrow<PascalStr> for PascalString {
+    #[inline]
     fn borrow(&self) -> &PascalStr {
         self.deref()
     }
 }
 
 impl BorrowMut<PascalStr> for PascalString {
+    #[inline]
     fn borrow_mut(&mut self) -> &mut PascalStr {
         self.deref_mut()
     }
 }
 
 impl Borrow<str> for PascalString {
+    #[inline]
     fn borrow(&self) -> &str {
         self.as_ref()
     }
 }
 
 impl Borrow<[u8]> for PascalString {
+    #[inline]
     fn borrow(&self) -> &[u8] {
         self.as_ref()
     }
 }
 
 impl Borrow<AsciiStr> for PascalString {
+    #[inline]
     fn borrow(&self) -> &AsciiStr {
         self.as_ref()
     }
 }
 
 impl Borrow<[AsciiChar]> for PascalString {
+    #[inline]
     fn borrow(&self) -> &[AsciiChar] {
         self.as_ref()
     }
 }
 
 impl BorrowMut<[AsciiChar]> for PascalString {
+    #[inline]
     fn borrow_mut(&mut self) -> &mut [AsciiChar] {
         self.as_mut()
     }
@@ -395,6 +405,7 @@ impl Into<[u8; PASCAL_STRING_BUF_SIZE + 1]> for PascalString {
 }
 
 impl Into<String> for PascalString {
+    #[inline]
     fn into(self) -> String {
         String::from_utf8_lossy(self.as_ref()).into_owned()
     }
@@ -415,6 +426,7 @@ pub enum PascalStringCreateError {
 }
 
 impl From<AsAsciiStrError> for PascalStringCreateError {
+    #[inline]
     fn from(e: AsAsciiStrError) -> Self {
         PascalStringCreateError::NotValidAscii(e)
     }
@@ -428,12 +440,14 @@ pub enum PascalStringAppendError {
 }
 
 impl From<ToAsciiCharError> for PascalStringAppendError {
+    #[inline]
     fn from(e: ToAsciiCharError) -> Self {
         PascalStringAppendError::InvalidCharAppended(e)
     }
 }
 
 impl From<AsAsciiStrError> for PascalStringAppendError {
+    #[inline]
     fn from(e: AsAsciiStrError) -> Self {
         PascalStringAppendError::InvalidStringAppended(e)
     }

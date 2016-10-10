@@ -317,12 +317,14 @@ pub struct Chars<'a>(Iter<'a, AsciiChar>);
 impl<'a> Iterator for Chars<'a> {
     type Item = &'a AsciiChar;
 
+    #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         self.0.next()
     }
 }
 
 impl<'a> ExactSizeIterator for Chars<'a> {
+    #[inline]
     fn len(&self) -> usize {
         self.0.len()
     }
@@ -334,12 +336,14 @@ pub struct CharsMut<'a>(IterMut<'a, AsciiChar>);
 impl<'a> Iterator for CharsMut<'a> {
     type Item = &'a mut AsciiChar;
 
+    #[inline]
     fn next(&mut self) -> Option<Self::Item> {
         self.0.next()
     }
 }
 
 impl<'a> ExactSizeIterator for CharsMut<'a> {
+    #[inline]
     fn len(&self) -> usize {
         self.0.len()
     }
@@ -349,6 +353,7 @@ impl<'a> ExactSizeIterator for CharsMut<'a> {
 pub struct InteriorNullError(usize);
 
 impl InteriorNullError {
+    #[inline]
     pub fn interior_null_index(&self) -> usize {
         self.0
     }
