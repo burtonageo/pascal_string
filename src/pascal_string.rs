@@ -32,7 +32,7 @@ impl PascalString {
     /// Ascii encoded characters.
     #[inline]
     pub fn from<B: AsRef<[u8]>>(bytes: B) -> Result<Self, PascalStringError> {
-        PascalString::_from_bytes(bytes.as_ref())
+        PascalString::_from(bytes.as_ref())
     }
 
     fn _from(bytes: &[u8]) -> Result<Self, PascalStringError>  {
