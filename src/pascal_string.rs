@@ -77,6 +77,7 @@ impl PascalString {
         self.len += 1;
         let idx = self.len - 1;
         self[idx] = ch;
+        self.set_trailing_byte_to_null();
         Ok(())
     }
 
@@ -111,6 +112,7 @@ impl PascalString {
         }
         let c = self.chars[self.len as usize];
         self.len -= 1;
+        self.set_trailing_byte_to_null();
         Some(c)
     }
 
@@ -126,6 +128,7 @@ impl PascalString {
             ptr::copy(ptr.offset(1), ptr, len - index.abs() as usize - 1);
         }
         self.len -= 1;
+        self.set_trailing_byte_to_null();
         c
     }
 
@@ -147,6 +150,7 @@ impl PascalString {
         }
         self[len] = ch;
         self.len += 1;
+        self.set_trailing_byte_to_null();
     }
 
     /// Truncates this String, removing all contents.
@@ -155,6 +159,7 @@ impl PascalString {
     #[inline]
     pub fn clear(&mut self) {
         self.len = 0;
+        self.set_trailing_byte_to_null();
     }
 
     /// Consumes this `PascalString`, and returns its inner state as a `[u8; 256]`, where the first byte
@@ -174,6 +179,13 @@ impl PascalString {
     #[inline]
     pub fn get_unchecked(&self, index: u8) -> AsciiChar {
         self.chars[index as usize]
+    }
+
+    #[inline]
+    fn set_trailing_byte_to_null(&mut self) {
+        if !self.is_full() {
+            self.chars[self.len as usize] = AsciiChar::Null;
+        }
     }
 }
 
@@ -385,6 +397,14 @@ impl Into<[u8; PASCAL_STRING_BUF_SIZE + 1]> for PascalString {
 impl Into<String> for PascalString {
     fn into(self) -> String {
         String::from_utf8_lossy(self.as_ref()).into_owned()
+    }
+}
+
+impl Into<Vec<u8>> for PascalString {
+    fn into(self) -> Vec<u8> {
+        let mut v = Vec::with_capacity(self.len());
+        v.extend_from_slice(self.as_ref());
+        v
     }
 }
 
