@@ -41,4 +41,17 @@ mod tests {
         string.push_str("Senor!");
         assert_eq!(string.as_str(), "Hola, Senor!");
     }
+
+    #[test]
+    fn test_string_indexing_and_char_iteration() {
+        let mut string = PascalString::from("q").unwrap();
+        assert_eq!(string[0u8], AsciiChar::q);
+
+        let mut string2 = PascalString::from("WASD").unwrap();
+        let mut iter = string2.chars();
+        assert_eq!(iter.next(), Some(&AsciiChar::W));
+        assert_eq!(iter.next(), Some(&AsciiChar::A));
+        assert_eq!(iter.next(), Some(&AsciiChar::S));
+        assert_eq!(iter.next(), Some(&AsciiChar::D));
+    }
 }
