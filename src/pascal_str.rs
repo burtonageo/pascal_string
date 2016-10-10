@@ -2,7 +2,9 @@ use ascii::{AsciiChar, AsciiStr};
 use std::ascii::AsciiExt;
 use std::borrow::{Cow, ToOwned};
 use std::convert::AsRef;
+use std::error::Error;
 use std::ffi::{CStr, CString};
+use std::fmt;
 use std::iter::{ExactSizeIterator, Iterator};
 use std::ops::{Index, IndexMut, Range, RangeFull, RangeFrom, RangeTo};
 use std::slice::{Iter, IterMut};
@@ -36,17 +38,17 @@ impl PascalStr {
 
     /// Get this string as a `CStr`.
     ///
-    /// Returns `None` if the string contains any interior nulls. If this string is full, then a new `CString` will
-    /// be allocated to hold the trailing null byte.
+    /// Returns `Err(InteriorNullError)` if the string contains any interior nulls. If this string is full,
+    /// then a new `CString` will be allocated to hold the trailing null byte.
     #[inline]
-    pub fn as_cstr(&self) -> Option<Cow<CStr>> {
-        if self.chars().any(|&c| c == AsciiChar::Null) {
-            None
+    pub fn as_cstr(&self) -> Result<Cow<CStr>, InteriorNullError> {
+        if let Some(pos) = self.chars().position(|&c| c == AsciiChar::Null) {
+            Err(InteriorNullError(pos))
         } else if self.is_full() {
             let str_clone = self.to_owned();
-            Some(Cow::Owned(CString::new(str_clone).unwrap()))
+            Ok(Cow::Owned(CString::new(str_clone).unwrap()))
         } else {
-            Some(Cow::Borrowed(CStr::from_bytes_with_nul(self.as_ref()).unwrap()))
+            Ok(Cow::Borrowed(CStr::from_bytes_with_nul(self.as_ref()).unwrap()))
         }
     }
 
@@ -340,5 +342,26 @@ impl<'a> Iterator for CharsMut<'a> {
 impl<'a> ExactSizeIterator for CharsMut<'a> {
     fn len(&self) -> usize {
         self.0.len()
+    }
+}
+
+#[derive(Clone, Debug, Hash)]
+pub struct InteriorNullError(usize);
+
+impl InteriorNullError {
+    pub fn interior_null_index(&self) -> usize {
+        self.0
+    }
+}
+
+impl fmt::Display for InteriorNullError {
+    fn fmt(&self, fmtr: &mut fmt::Formatter) -> fmt::Result {
+        write!(fmtr, "interior null at {}", self.0)
+    }
+}
+
+impl Error for InteriorNullError {
+    fn description(&self) -> &str {
+        "an interior null was found when creating a CStr from a pascal string"
     }
 }
