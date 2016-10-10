@@ -1,7 +1,8 @@
 use ascii::{AsciiChar, AsciiStr};
 use std::ascii::AsciiExt;
-use std::borrow::ToOwned;
+use std::borrow::{Cow, ToOwned};
 use std::convert::AsRef;
+use std::ffi::{CStr, CString};
 use std::iter::{ExactSizeIterator, Iterator};
 use std::ops::{Index, IndexMut, Range, RangeFull, RangeFrom, RangeTo};
 use std::slice::{Iter, IterMut};
@@ -31,6 +32,22 @@ impl PascalStr {
     #[inline]
     pub fn as_str(&self) -> &str {
         self.string.as_str()
+    }
+
+    /// Get this string as a `CStr`.
+    ///
+    /// Returns `None` if the string contains any interior nulls. If this string is full, then a new `CString` will
+    /// be allocated to hold the trailing null byte.
+    #[inline]
+    pub fn as_cstr(&self) -> Option<Cow<CStr>> {
+        if self.chars().any(|&c| c == AsciiChar::Null) {
+            None
+        } else if self.is_full() {
+            let str_clone = self.to_owned();
+            Some(Cow::Owned(CString::new(str_clone).unwrap()))
+        } else {
+            Some(Cow::Borrowed(CStr::from_bytes_with_nul(self.as_ref()).unwrap()))
+        }
     }
 
     /// Returns the number of characters used in the string.
