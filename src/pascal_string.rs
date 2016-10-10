@@ -31,11 +31,11 @@ impl PascalString {
     /// Returns an `Err` if `bytes` is longer than 255 characters, or it does not contain
     /// Ascii encoded characters.
     #[inline]
-    pub fn from_bytes<B: AsRef<[u8]>>(bytes: B) -> Result<Self, PascalStringError> {
+    pub fn from<B: AsRef<[u8]>>(bytes: B) -> Result<Self, PascalStringError> {
         PascalString::_from_bytes(bytes.as_ref())
     }
 
-    fn _from_bytes(bytes: &[u8]) -> Result<Self, PascalStringError>  {
+    fn _from(bytes: &[u8]) -> Result<Self, PascalStringError>  {
         let len = bytes.len();
         if len > PASCAL_STRING_BUF_SIZE {
             return Err(PascalStringError::OutOfBounds);

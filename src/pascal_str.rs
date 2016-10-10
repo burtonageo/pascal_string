@@ -69,14 +69,14 @@ impl AsciiExt for PascalStr {
 
     fn to_ascii_uppercase(&self) -> Self::Owned {
         let bytes: &[u8] = self.as_ref();
-        let mut upper = PascalString::from_bytes(bytes).unwrap();
+        let mut upper = PascalString::from(bytes).unwrap();
         upper.make_ascii_uppercase();
         upper
     }
 
     fn to_ascii_lowercase(&self) -> Self::Owned {
         let bytes: &[u8] = self.as_ref();
-        let mut lower = PascalString::from_bytes(bytes).unwrap();
+        let mut lower = PascalString::from(bytes).unwrap();
         lower.make_ascii_lowercase();
         lower
     }
@@ -97,7 +97,7 @@ impl AsciiExt for PascalStr {
 impl ToOwned for PascalStr {
     type Owned = PascalString;
     fn to_owned(&self) -> Self::Owned {
-        PascalString::from_bytes(&self.string).unwrap()
+        PascalString::from(&self.string).unwrap()
     }
 }
 
