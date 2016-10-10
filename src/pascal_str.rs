@@ -27,6 +27,12 @@ impl PascalStr {
         self.string.as_mut_ptr()
     }
 
+    /// Get the `PascalStr` as an immutable `&str` reference.
+    #[inline]
+    pub fn as_str(&self) -> &str {
+        self.string.as_str()
+    }
+
     /// Returns the number of characters used in the string.
     #[inline]
     pub fn len(&self) -> usize {
