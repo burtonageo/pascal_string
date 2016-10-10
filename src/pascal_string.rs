@@ -31,14 +31,14 @@ impl PascalString {
     /// Returns an `Err` if `bytes` is longer than 255 characters, or it does not contain
     /// Ascii encoded characters.
     #[inline]
-    pub fn from<B: AsRef<[u8]>>(bytes: B) -> Result<Self, PascalStringError> {
+    pub fn from<B: AsRef<[u8]>>(bytes: B) -> Result<Self, PascalStringCreateError> {
         PascalString::_from(bytes.as_ref())
     }
 
-    fn _from(bytes: &[u8]) -> Result<Self, PascalStringError>  {
+    fn _from(bytes: &[u8]) -> Result<Self, PascalStringCreateError>  {
         let len = bytes.len();
         if len > PASCAL_STRING_BUF_SIZE {
-            return Err(PascalStringError::OutOfBounds);
+            return Err(PascalStringCreateError::InputTooLong);
         }
         // Perform ascii check
         let ascii = try!(AsciiStr::from_ascii(bytes));
@@ -66,13 +66,13 @@ impl PascalString {
     /// Returns `Err(_)` if the character cannot be pushed because this `PascalString` is full, or if
     /// `character` is not a valid ascii character.
     #[inline]
-    pub fn try_push<C: ToAsciiChar>(&mut self, character: C) -> Result<(), PascalStringError> {
+    pub fn try_push<C: ToAsciiChar>(&mut self, character: C) -> Result<(), PascalStringAppendError> {
         self._try_push(try!(AsciiChar::from(character)))
     }
 
-    fn _try_push(&mut self, ch: AsciiChar) -> Result<(), PascalStringError> {
+    fn _try_push(&mut self, ch: AsciiChar) -> Result<(), PascalStringAppendError> {
         if self.is_full() {
-            return Err(PascalStringError::OutOfBounds)
+            return Err(PascalStringAppendError::AppendedStringTooLong)
         }
         let len = self.len();
         self[len] = ch;
@@ -94,11 +94,11 @@ impl PascalString {
     ///
     /// Returns `Err(_)` if the string cannot be pushed because this `PascalString` is full.
     #[inline]
-    pub fn try_push_str<S: AsRef<str>>(&mut self, s: S) -> Result<(), PascalStringError> {
+    pub fn try_push_str<S: AsRef<str>>(&mut self, s: S) -> Result<(), PascalStringAppendError> {
         self._try_push_str(s.as_ref())
     }
 
-    fn _try_push_str(&mut self, s: &str) -> Result<(), PascalStringError> {
+    fn _try_push_str(&mut self, s: &str) -> Result<(), PascalStringAppendError> {
         unimplemented!()
     }
 
@@ -389,20 +389,32 @@ impl Into<String> for PascalString {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum PascalStringError {
-    OutOfBounds,
-    InvalidChar(ToAsciiCharError),
-    InvalidString(AsAsciiStrError)
+pub enum PascalStringCreateError {
+    InputTooLong,
+    NotValidAscii(AsAsciiStrError)
 }
 
-impl From<ToAsciiCharError> for PascalStringError {
-    fn from(e: ToAsciiCharError) -> Self {
-        PascalStringError::InvalidChar(e)
+impl From<AsAsciiStrError> for PascalStringCreateError {
+    fn from(e: AsAsciiStrError) -> Self {
+        PascalStringCreateError::NotValidAscii(e)
     }
 }
 
-impl From<AsAsciiStrError> for PascalStringError {
+#[derive(Debug, PartialEq)]
+pub enum PascalStringAppendError {
+    AppendedStringTooLong,
+    InvalidCharAppended(ToAsciiCharError),
+    InvalidStringAppended(AsAsciiStrError)
+}
+
+impl From<ToAsciiCharError> for PascalStringAppendError {
+    fn from(e: ToAsciiCharError) -> Self {
+        PascalStringAppendError::InvalidCharAppended(e)
+    }
+}
+
+impl From<AsAsciiStrError> for PascalStringAppendError {
     fn from(e: AsAsciiStrError) -> Self {
-        PascalStringError::InvalidString(e)
+        PascalStringAppendError::InvalidStringAppended(e)
     }
 }
