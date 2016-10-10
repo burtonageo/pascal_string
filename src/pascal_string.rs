@@ -74,9 +74,9 @@ impl PascalString {
         if self.is_full() {
             return Err(PascalStringAppendError::AppendedStringTooLong)
         }
-        let len = self.len();
-        self[len] = ch;
         self.len += 1;
+        let idx = self.len - 1;
+        self[idx] = ch;
         Ok(())
     }
 
