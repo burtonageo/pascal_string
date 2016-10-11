@@ -6,12 +6,15 @@ mod pascal_string;
 const PASCAL_STRING_BUF_SIZE: usize = 255;
 
 pub use pascal_str::{Chars, CharsMut, PascalStr};
-pub use pascal_string::{PascalString, PascalStringAppendError, PascalStringCreateError};
+pub use pascal_string::{PascalString, PascalStringAppendError, PascalStringCreateError, AsciiError};
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use ascii::*;
+    use std::borrow::Cow;
+    use std::ffi::{CStr, CString};
+
     #[test]
     fn test_string_creation() {
         let test = "Hello, my world!".to_owned();
@@ -53,5 +56,36 @@ mod tests {
         assert_eq!(iter.next(), Some(&AsciiChar::A));
         assert_eq!(iter.next(), Some(&AsciiChar::S));
         assert_eq!(iter.next(), Some(&AsciiChar::D));
+    }
+
+    #[test]
+    fn test_as_cstr() {
+        let msg = "I am your favourite cookie monster >:-)\0";
+        let pstr = PascalString::from(&msg).unwrap();
+        let cstr = CStr::from_bytes_with_nul(msg.as_bytes()).unwrap();
+        let pstr_as_cstr = pstr.as_cstr().unwrap();
+        assert!(match pstr_as_cstr {
+            Cow::Borrowed(_) => true,
+            _ => false
+        });
+        assert_eq!(&*pstr_as_cstr, cstr);
+
+        let oversized = ['l'; 255];
+        let mut string_oversized = {
+            let mut s = String::new();
+            for i in 0..oversized.len() {
+                s.push(oversized[i]);
+            }
+            s
+        };
+        let pstr_oversized = PascalString::from_fixed_ascii_array(255, oversized).unwrap();
+        println!("oversized: {}", pstr_oversized.is_full());
+        let cstr_from_pstr_oversized = pstr_oversized.as_cstr().unwrap();
+        let cstr_from_string_oversized = CString::new(string_oversized).unwrap();
+        assert!(match cstr_from_pstr_oversized {
+            Cow::Owned(_) => true,
+            _ => false
+        });
+        assert_eq!(cstr_from_pstr_oversized.into_owned(), cstr_from_string_oversized);
     }
 }
