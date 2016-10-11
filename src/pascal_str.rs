@@ -389,6 +389,22 @@ impl IndexMut<RangeTo<i32>> for PascalStr {
     }
 }
 
+impl<'a> IntoIterator for &'a PascalStr {
+    type Item = &'a AsciiChar;
+    type IntoIter = Chars<'a>;
+    fn into_iter(self) -> Self::IntoIter {
+        self.chars()
+    }
+}
+
+impl<'a> IntoIterator for &'a mut PascalStr {
+    type Item = &'a mut AsciiChar;
+    type IntoIter = CharsMut<'a>;
+    fn into_iter(self) -> Self::IntoIter {
+        self.chars_mut()
+    }
+}
+
 /// An immutable iterator over the buffer of a `PascalStr`.
 pub struct Chars<'a>(Iter<'a, AsciiChar>);
 
