@@ -406,6 +406,7 @@ impl<'a> IntoIterator for &'a mut PascalStr {
 }
 
 /// An immutable iterator over the buffer of a `PascalStr`.
+#[derive(Debug)]
 pub struct Chars<'a>(Iter<'a, AsciiChar>);
 
 impl<'a> Iterator for Chars<'a> {
@@ -425,6 +426,7 @@ impl<'a> ExactSizeIterator for Chars<'a> {
 }
 
 /// A mutable iterator over the buffer of a `PascalStr`.
+#[derive(Debug)]
 pub struct CharsMut<'a>(IterMut<'a, AsciiChar>);
 
 impl<'a> Iterator for CharsMut<'a> {
