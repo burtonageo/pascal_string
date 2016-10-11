@@ -26,6 +26,20 @@ impl PascalString {
         Default::default()
     }
 
+    /// Create a new `PascalString` from its constituent parts: `string_len` and `char_array`.
+    ///
+    /// Returns an `Err` if `char_array` is not valid Ascii.
+    #[inline]
+    pub fn from_fixed_ascii_array<C>(string_len: u8, char_array: [C; 255]) -> Result<Self, PascalStringCreateError>
+        where C: ToAsciiChar + Clone {
+        let mut pstring = PascalString::new();
+        pstring.len = string_len;
+        for i in 0..(pstring.len as usize) {
+            pstring[i] = try!(AsciiChar::from(char_array[i].clone()));
+        }
+        Ok(pstring)
+    }
+
     /// Create a new `PascalString` using the contents of `bytes`.
     ///
     /// Returns an `Err` if `bytes` is longer than 255 characters, or it does not contain
@@ -422,13 +436,13 @@ impl Into<Vec<u8>> for PascalString {
 #[derive(Debug, PartialEq)]
 pub enum PascalStringCreateError {
     InputTooLong,
-    NotValidAscii(AsAsciiStrError)
+    NotValidAscii(AsciiError)
 }
 
-impl From<AsAsciiStrError> for PascalStringCreateError {
+impl<E: Into<AsciiError>> From<E> for PascalStringCreateError {
     #[inline]
-    fn from(e: AsAsciiStrError) -> Self {
-        PascalStringCreateError::NotValidAscii(e)
+    fn from(e: E) -> Self {
+        PascalStringCreateError::NotValidAscii(e.into())
     }
 }
 
@@ -450,5 +464,25 @@ impl From<AsAsciiStrError> for PascalStringAppendError {
     #[inline]
     fn from(e: AsAsciiStrError) -> Self {
         PascalStringAppendError::InvalidStringAppended(e)
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub enum AsciiError {
+    Char(ToAsciiCharError),
+    Str(AsAsciiStrError)
+}
+
+impl From<ToAsciiCharError> for AsciiError {
+    #[inline]
+    fn from(e: ToAsciiCharError) -> Self {
+        AsciiError::Char(e)
+    }
+}
+
+impl From<AsAsciiStrError> for AsciiError {
+    #[inline]
+    fn from(e: AsAsciiStrError) -> Self {
+        AsciiError::Str(e)
     }
 }
