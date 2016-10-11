@@ -101,5 +101,15 @@ mod tests {
             });
             assert_eq!(cstr_from_pstr_oversized.into_owned(), cstr_from_string_oversized);
         }
+
+        {
+            let has_interior_null = "lol\0hi";
+            let pstr = PascalString::from(&has_interior_null).unwrap();
+            let err = match pstr.as_cstr() {
+                Err(err) => err,
+                _ => panic!("incorrect result")
+            };
+            assert_eq!(err.interior_null_index(), 3);
+        }
     }
 }
