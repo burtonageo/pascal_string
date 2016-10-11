@@ -4,6 +4,7 @@ use std::borrow::{Borrow, BorrowMut};
 use std::cmp::{Eq, PartialEq};
 use std::convert::{AsRef, AsMut, From, Into};
 use std::hash::{Hash, Hasher};
+use std::iter::{FromIterator, IntoIterator};
 use std::ops::{Deref, DerefMut};
 use std::{fmt, mem, ptr, slice, str};
 use ::{PascalStr, PASCAL_STRING_BUF_SIZE};
@@ -430,6 +431,37 @@ impl Into<Vec<u8>> for PascalString {
         let mut v = Vec::with_capacity(self.len());
         v.extend_from_slice(self.as_ref());
         v
+    }
+}
+
+impl FromIterator<AsciiChar> for PascalString {
+    fn from_iter<I: IntoIterator<Item = AsciiChar>>(iter: I) -> Self {
+        let mut iter = iter.into_iter();
+        let mut pstring = PascalString::new();
+        while let Some(c) = iter.next() {
+            // We know that the characters are valid ascii, and it's probably kinder to drop characters
+            // past the 255th index than panic in this method.
+            let _ = pstring.try_push(c);
+        }
+        pstring
+    }
+}
+
+impl IntoIterator for PascalString {
+    type Item = AsciiChar;
+    type IntoIter = IntoCharsIter;
+    fn into_iter(self) -> Self::IntoIter {
+        IntoCharsIter(self)
+    }
+}
+
+#[derive(Debug)]
+pub struct IntoCharsIter(PascalString);
+
+impl Iterator for IntoCharsIter {
+    type Item = AsciiChar;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.pop()
     }
 }
 
