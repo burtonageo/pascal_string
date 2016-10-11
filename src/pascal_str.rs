@@ -42,13 +42,13 @@ impl PascalStr {
     /// then a new `CString` will be allocated to hold the trailing null byte.
     #[inline]
     pub fn as_cstr(&self) -> Result<Cow<CStr>, InteriorNullError> {
-        if let Some(pos) = self.chars().position(|&c| c == AsciiChar::Null) {
-            Err(InteriorNullError(pos))
-        } else if self.is_full() {
-            let str_clone = self.to_owned();
-            Ok(Cow::Owned(CString::new(str_clone).unwrap()))
-        } else {
-            Ok(Cow::Borrowed(CStr::from_bytes_with_nul(self.as_ref()).unwrap()))
+        match self.chars().position(|&c| c == AsciiChar::Null) {
+            Some(pos) if pos != (self.len() - 1) => Err(InteriorNullError(pos)),
+            _ if self.is_full() && self.string[PASCAL_STRING_BUF_SIZE - 1] != AsciiChar::Null => {
+                let str_clone = self.to_owned();
+                Ok(Cow::Owned(CString::new(str_clone).unwrap()))
+            }
+            _ => Ok(Cow::Borrowed(CStr::from_bytes_with_nul(self.as_ref()).unwrap()))
         }
     }
 
