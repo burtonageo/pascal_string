@@ -438,10 +438,10 @@ impl FromIterator<AsciiChar> for PascalString {
     fn from_iter<I: IntoIterator<Item = AsciiChar>>(iter: I) -> Self {
         let mut iter = iter.into_iter();
         let mut pstring = PascalString::new();
-        while let Some(c) = iter.next() {
+        while let Some(ch) = iter.next() {
             // We know that the characters are valid ascii, and it's probably kinder to drop characters
             // past the 255th index than panic in this method.
-            let _ = pstring.try_push(c);
+            let _ = pstring.try_push(ch);
         }
         pstring
     }
