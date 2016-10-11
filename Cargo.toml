@@ -4,6 +4,8 @@ version = "0.0.0"
 authors = ["George Burton <burtonageo@gmail.com>"]
 description = "Pascal strings in Rust."
 license = "MIT"
+homepage = "https://github.com/burtonageo/pascal_string"
+repository = "https://github.com/burtonageo/pascal_string"
 
 [dependencies]
 ascii = "0.7"
