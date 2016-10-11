@@ -194,6 +194,23 @@ impl IndexMut<usize> for PascalStr {
     }
 }
 
+impl Index<i32> for PascalStr {
+    type Output = AsciiChar;
+    fn index(&self, index: i32) -> &Self::Output {
+        assert!(index >= 0);
+        assert!((index as usize) < self.len());
+        &self.string[index as usize]
+    }
+}
+
+impl IndexMut<i32> for PascalStr {
+    fn index_mut(&mut self, index: i32) -> &mut Self::Output {
+        assert!(index >= 0);
+        assert!((index as usize) < self.len());
+        &mut self.string[index as usize]
+    }
+}
+
 impl Index<RangeFull> for PascalStr {
     type Output = [AsciiChar];
     fn index(&self, _: RangeFull) -> &Self::Output {
@@ -243,6 +260,29 @@ impl IndexMut<Range<usize>> for PascalStr {
     }
 }
 
+impl Index<Range<i32>> for PascalStr {
+    type Output = [AsciiChar];
+    fn index(&self, range: Range<i32>) -> &Self::Output {
+        assert!(range.start >= 0);
+        assert!((range.start as usize) < self.len());
+        assert!(range.end >= 0);
+        assert!((range.end as usize) < self.len());
+        let char_array: &[AsciiChar] = self.string.as_ref();
+        &char_array[range.start as usize..]
+    }
+}
+
+impl IndexMut<Range<i32>> for PascalStr {
+    fn index_mut(&mut self, range: Range<i32>) -> &mut Self::Output {
+        assert!(range.start >= 0);
+        assert!((range.start as usize) < self.len());
+        assert!(range.end >= 0);
+        assert!((range.end as usize) < self.len());
+        let char_array: &mut [AsciiChar] = self.string.as_mut();
+        &mut char_array[range.start as usize..]
+    }
+}
+
 impl Index<RangeFrom<u8>> for PascalStr {
     type Output = [AsciiChar];
     fn index(&self, range: RangeFrom<u8>) -> &Self::Output {
@@ -277,6 +317,25 @@ impl IndexMut<RangeFrom<usize>> for PascalStr {
     }
 }
 
+impl Index<RangeFrom<i32>> for PascalStr {
+    type Output = [AsciiChar];
+    fn index(&self, range: RangeFrom<i32>) -> &Self::Output {
+        assert!(range.start >= 0);
+        assert!((range.start as usize) < self.len());
+        let char_array: &[AsciiChar] = self.string.as_ref();
+        &char_array[range.start as usize..]
+    }
+}
+
+impl IndexMut<RangeFrom<i32>> for PascalStr {
+    fn index_mut(&mut self, range: RangeFrom<i32>) -> &mut Self::Output {
+        assert!(range.start >= 0);
+        assert!((range.start as usize) < self.len());
+        let char_array: &mut [AsciiChar] = self.string.as_mut();
+        &mut char_array[range.start as usize..]
+    }
+}
+
 impl Index<RangeTo<u8>> for PascalStr {
     type Output = [AsciiChar];
     fn index(&self, range: RangeTo<u8>) -> &Self::Output {
@@ -308,6 +367,25 @@ impl IndexMut<RangeTo<usize>> for PascalStr {
         assert!(range.end < self.len());
         let char_array: &mut [AsciiChar] = self.string.as_mut();
         &mut char_array[..range.end]
+    }
+}
+
+impl Index<RangeTo<i32>> for PascalStr {
+    type Output = [AsciiChar];
+    fn index(&self, range: RangeTo<i32>) -> &Self::Output {
+        assert!(range.end >= 0);
+        assert!((range.end as usize) < self.len());
+        let char_array: &[AsciiChar] = self.string.as_ref();
+        &char_array[..range.end as usize]
+    }
+}
+
+impl IndexMut<RangeTo<i32>> for PascalStr {
+    fn index_mut(&mut self, range: RangeTo<i32>) -> &mut Self::Output {
+        assert!(range.end >= 0);
+        assert!((range.end as usize) < self.len());
+        let char_array: &mut [AsciiChar] = self.string.as_mut();
+        &mut char_array[..range.end as usize]
     }
 }
 
