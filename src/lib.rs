@@ -66,32 +66,36 @@ mod tests {
 
     #[test]
     fn test_as_cstr() {
-        let msg = "I am your favourite cookie monster >:-)\0";
-        let pstr = PascalString::from(&msg).unwrap();
-        let cstr = CStr::from_bytes_with_nul(msg.as_bytes()).unwrap();
-        let pstr_as_cstr = pstr.as_cstr().unwrap();
-        assert!(match pstr_as_cstr {
-            Cow::Borrowed(_) => true,
-            _ => false
-        });
-        assert_eq!(&*pstr_as_cstr, cstr);
+        {
+            let msg = "I am your favourite cookie monster >:-)\0";
+            let pstr = PascalString::from(&msg).unwrap();
+            let cstr = CStr::from_bytes_with_nul(msg.as_bytes()).unwrap();
+            let pstr_as_cstr = pstr.as_cstr().unwrap();
+            assert!(match pstr_as_cstr {
+                Cow::Borrowed(_) => true,
+                _ => false
+            });
+            assert_eq!(&*pstr_as_cstr, cstr);
+        }
 
-        let oversized = ['l'; 255];
-        let mut string_oversized = {
-            let mut s = String::new();
-            for i in 0..oversized.len() {
-                s.push(oversized[i]);
-            }
-            s
-        };
-        let pstr_oversized = PascalString::from_fixed_ascii_array(255, oversized).unwrap();
-        println!("oversized: {}", pstr_oversized.is_full());
-        let cstr_from_pstr_oversized = pstr_oversized.as_cstr().unwrap();
-        let cstr_from_string_oversized = CString::new(string_oversized).unwrap();
-        assert!(match cstr_from_pstr_oversized {
-            Cow::Owned(_) => true,
-            _ => false
-        });
-        assert_eq!(cstr_from_pstr_oversized.into_owned(), cstr_from_string_oversized);
+        {
+            let oversized = ['l'; 255];
+            let mut string_oversized = {
+                let mut s = String::new();
+                for i in 0..oversized.len() {
+                    s.push(oversized[i]);
+                }
+                s
+            };
+            let pstr_oversized = PascalString::from_fixed_ascii_array(255, oversized).unwrap();
+            println!("oversized: {}", pstr_oversized.is_full());
+            let cstr_from_pstr_oversized = pstr_oversized.as_cstr().unwrap();
+            let cstr_from_string_oversized = CString::new(string_oversized).unwrap();
+            assert!(match cstr_from_pstr_oversized {
+                Cow::Owned(_) => true,
+                _ => false
+            });
+            assert_eq!(cstr_from_pstr_oversized.into_owned(), cstr_from_string_oversized);
+        }
     }
 }
