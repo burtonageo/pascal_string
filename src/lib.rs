@@ -20,6 +20,12 @@ mod tests {
         let test = "Hello, my world!".to_owned();
         let test_pascal = PascalString::from(&test).unwrap();
         assert_eq!(&test, test_pascal.as_str());
+
+        let too_many_bytes = vec![12u8; 256];
+        assert!(match PascalString::from(&too_many_bytes) {
+            Err(PascalStringCreateError::InputTooLong) => true,
+            _ => false
+        });
     }
 
     #[test]
