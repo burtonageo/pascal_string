@@ -3,6 +3,7 @@ use std::ascii::AsciiExt;
 use std::borrow::{Borrow, BorrowMut};
 use std::cmp::{Eq, PartialEq};
 use std::convert::{AsRef, AsMut, From, Into};
+use std::error::Error;
 use std::hash::{Hash, Hasher};
 use std::iter::{ExactSizeIterator, FromIterator, IntoIterator};
 use std::ops::{Deref, DerefMut};
@@ -518,6 +519,32 @@ pub enum PascalStringCreateError {
     NotValidAscii(AsciiError)
 }
 
+impl fmt::Display for PascalStringCreateError {
+    fn fmt(&self, fmtr: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            PascalStringCreateError::InputTooLong => fmtr.pad(self.description()),
+            PascalStringCreateError::NotValidAscii(ref e) => write!(fmtr, "{}: {}", self.description(), e)
+        }
+    }
+}
+
+impl Error for PascalStringCreateError {
+    fn description(&self) -> &str {
+        match *self {
+            PascalStringCreateError::InputTooLong => "the input data is longer than what a PascalString can store",
+            PascalStringCreateError::NotValidAscii(_) =>"could not convert input data to ascii"
+        }
+    }
+
+    fn cause(&self) -> Option<&Error> {
+        if let PascalStringCreateError::NotValidAscii(ref e) = *self {
+            Some(e)
+        } else {
+            None
+        }
+    }
+}
+
 impl<E: Into<AsciiError>> From<E> for PascalStringCreateError {
     #[inline]
     fn from(e: E) -> Self {
@@ -534,6 +561,32 @@ pub enum PascalStringAppendError {
     NotValidAscii(AsciiError)
 }
 
+impl fmt::Display for PascalStringAppendError {
+    fn fmt(&self, fmtr: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            PascalStringAppendError::NoRoom => fmtr.pad(self.description()),
+            PascalStringAppendError::NotValidAscii(ref e) => write!(fmtr, "{}: {}", self.description(), e)
+        }
+    }
+}
+
+impl Error for PascalStringAppendError {
+    fn description(&self) -> &str {
+        match *self {
+            PascalStringAppendError::NoRoom => "there is no space left in the string to append the data",
+            PascalStringAppendError::NotValidAscii(_) =>"could not convert string to ascii"
+        }
+    }
+
+    fn cause(&self) -> Option<&Error> {
+        if let PascalStringAppendError::NotValidAscii(ref e) = *self {
+            Some(e)
+        } else {
+            None
+        }
+    }
+}
+
 impl<E: Into<AsciiError>> From<E> for PascalStringAppendError {
     #[inline]
     fn from(e: E) -> Self {
@@ -548,6 +601,31 @@ pub enum AsciiError {
     Char(ToAsciiCharError),
     /// A string was not encoded as ascii.
     Str(AsAsciiStrError)
+}
+
+impl fmt::Display for AsciiError {
+    fn fmt(&self, fmtr: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            AsciiError::Char(ref e) => write!(fmtr, "{}: {}", self.description(), e),
+            AsciiError::Str(ref e) => write!(fmtr, "{}: {}", self.description(), e)
+        }
+    }
+}
+
+impl Error for AsciiError {
+    fn description(&self) -> &str {
+        match *self {
+            AsciiError::Char(_) => "could not convert character to ascii: {}",
+            AsciiError::Str(_) =>"could not convert string to ascii: {}"
+        }
+    }
+
+    fn cause(&self) -> Option<&Error> {
+        match *self {
+            AsciiError::Char(ref e) => Some(e),
+            AsciiError::Str(ref e) => Some(e)
+        }
+    }
 }
 
 impl From<ToAsciiCharError> for AsciiError {
