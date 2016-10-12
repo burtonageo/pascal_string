@@ -216,6 +216,9 @@ impl PascalString {
         self.chars[index as usize]
     }
 
+    /// Sets the byte beyond the end of `len` to `AsciiChar::Null`, if this `PascalString` isn't full.
+    ///
+    /// Used to ensure that `PascalStr::as_cstr()` works correctly.
     #[inline]
     fn set_trailing_byte_to_null(&mut self) {
         if !self.is_full() {
