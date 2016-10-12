@@ -1,4 +1,4 @@
-use ascii::{AsAsciiStrError, AsciiChar, AsciiStr, ToAsciiChar, ToAsciiCharError};
+use ascii::{AsAsciiStrError, AsciiChar, AsciiStr, AsciiString, ToAsciiChar, ToAsciiCharError};
 use std::ascii::AsciiExt;
 use std::borrow::{Borrow, BorrowMut};
 use std::cmp::{Eq, PartialEq};
@@ -451,6 +451,20 @@ impl Into<Vec<u8>> for PascalString {
         let mut v = Vec::with_capacity(self.len());
         v.extend_from_slice(self.as_ref());
         v
+    }
+}
+
+impl Into<Vec<AsciiChar>> for PascalString {
+    fn into(self) -> Vec<AsciiChar> {
+        let mut v = Vec::with_capacity(self.len());
+        v.extend_from_slice(self.as_ref());
+        v
+    }
+}
+
+impl Into<AsciiString> for PascalString {
+    fn into(self) -> AsciiString {
+        AsciiString::from_ascii(self).unwrap()
     }
 }
 
