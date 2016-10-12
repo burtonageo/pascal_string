@@ -4,7 +4,7 @@ use std::borrow::{Borrow, BorrowMut};
 use std::cmp::{Eq, PartialEq};
 use std::convert::{AsRef, AsMut, From, Into};
 use std::hash::{Hash, Hasher};
-use std::iter::{FromIterator, IntoIterator};
+use std::iter::{ExactSizeIterator, FromIterator, IntoIterator};
 use std::ops::{Deref, DerefMut};
 use std::{fmt, mem, ptr, slice, str};
 use ::{PascalStr, PASCAL_STRING_BUF_SIZE};
@@ -462,6 +462,12 @@ impl Iterator for IntoCharsIter {
     type Item = AsciiChar;
     fn next(&mut self) -> Option<Self::Item> {
         self.0.pop()
+    }
+}
+
+impl ExactSizeIterator for IntoCharsIter {
+    fn len(&self) -> usize {
+        self.0.len()
     }
 }
 
