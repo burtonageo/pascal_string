@@ -449,23 +449,23 @@ impl FromIterator<AsciiChar> for PascalString {
 
 impl IntoIterator for PascalString {
     type Item = AsciiChar;
-    type IntoIter = IntoCharsIter;
+    type IntoIter = IntoChars;
     fn into_iter(self) -> Self::IntoIter {
-        IntoCharsIter(self)
+        IntoChars(self)
     }
 }
 
 #[derive(Debug)]
-pub struct IntoCharsIter(PascalString);
+pub struct IntoChars(PascalString);
 
-impl Iterator for IntoCharsIter {
+impl Iterator for IntoChars {
     type Item = AsciiChar;
     fn next(&mut self) -> Option<Self::Item> {
         self.0.pop()
     }
 }
 
-impl ExactSizeIterator for IntoCharsIter {
+impl ExactSizeIterator for IntoChars {
     fn len(&self) -> usize {
         self.0.len()
     }
