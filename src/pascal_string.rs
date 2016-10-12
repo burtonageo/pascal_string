@@ -32,7 +32,8 @@ impl PascalString {
     ///
     /// Returns an `Err` if `char_array` is not valid Ascii.
     #[inline]
-    pub fn from_fixed_ascii_array<C>(string_len: u8, char_array: [C; 255]) -> Result<Self, PascalStringCreateError>
+    pub fn from_fixed_ascii_array<C>(string_len: u8, char_array: [C; PASCAL_STRING_BUF_SIZE])
+                                     -> Result<Self, PascalStringCreateError>
         where C: ToAsciiChar + Clone {
         let mut pstring = PascalString::new();
         pstring.len = string_len;
