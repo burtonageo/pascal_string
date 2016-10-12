@@ -39,7 +39,6 @@ mod tests {
         string.push('o');
         string.push(AsciiChar::Null);
 
-        println!("{}", string);
         assert_eq!(string.as_str(), "heLlLo\0");
     }
 
@@ -92,7 +91,6 @@ mod tests {
                 s
             };
             let pstr_oversized = PascalString::from_fixed_ascii_array(255, oversized).unwrap();
-            println!("oversized: {}", pstr_oversized.is_full());
             let cstr_from_pstr_oversized = pstr_oversized.as_cstr().unwrap();
             let cstr_from_string_oversized = CString::new(string_oversized).unwrap();
             assert!(match cstr_from_pstr_oversized {
