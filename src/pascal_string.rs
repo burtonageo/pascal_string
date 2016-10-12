@@ -115,7 +115,17 @@ impl PascalString {
     }
 
     fn _try_push_str(&mut self, s: &str) -> Result<(), PascalStringAppendError> {
-        unimplemented!()
+        let ascii: &[AsciiChar] = try!(AsciiStr::from_ascii(s)).as_ref();
+        let slen = self.len();
+        let alen = ascii.len();
+        if slen + alen > PASCAL_STRING_BUF_SIZE {
+            return Err(PascalStringAppendError::AppendedStringTooLong);
+        }
+        for i in 0..alen {
+            self.chars[(i + slen)] = ascii[i];
+        }
+        self.len += alen as u8;
+        Ok(())
     }
 
     /// Removes the last character from the string buffer and returns it.
