@@ -481,21 +481,13 @@ impl<E: Into<AsciiError>> From<E> for PascalStringCreateError {
 #[derive(Debug, PartialEq)]
 pub enum PascalStringAppendError {
     AppendedStringTooLong,
-    InvalidCharAppended(ToAsciiCharError),
-    InvalidStringAppended(AsAsciiStrError)
+    NotValidAscii(AsciiError)
 }
 
-impl From<ToAsciiCharError> for PascalStringAppendError {
+impl<E: Into<AsciiError>> From<E> for PascalStringAppendError {
     #[inline]
-    fn from(e: ToAsciiCharError) -> Self {
-        PascalStringAppendError::InvalidCharAppended(e)
-    }
-}
-
-impl From<AsAsciiStrError> for PascalStringAppendError {
-    #[inline]
-    fn from(e: AsAsciiStrError) -> Self {
-        PascalStringAppendError::InvalidStringAppended(e)
+    fn from(e: E) -> Self {
+        PascalStringAppendError::NotValidAscii(e.into())
     }
 }
 
