@@ -1,3 +1,7 @@
+#![warn(missing_docs)]
+
+//! Pascal Strings in Rust.
+
 extern crate ascii;
 
 mod pascal_str;
