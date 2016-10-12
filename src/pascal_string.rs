@@ -87,7 +87,7 @@ impl PascalString {
 
     fn _try_push(&mut self, ch: AsciiChar) -> Result<(), PascalStringAppendError> {
         if self.is_full() {
-            return Err(PascalStringAppendError::AppendedStringTooLong)
+            return Err(PascalStringAppendError::NoRoom)
         }
         self.len += 1;
         let idx = self.len - 1;
@@ -119,7 +119,7 @@ impl PascalString {
         let slen = self.len();
         let alen = ascii.len();
         if slen + alen > PASCAL_STRING_BUF_SIZE {
-            return Err(PascalStringAppendError::AppendedStringTooLong);
+            return Err(PascalStringAppendError::NoRoom);
         }
         for i in 0..alen {
             self.chars[(i + slen)] = ascii[i];
@@ -496,7 +496,7 @@ impl<E: Into<AsciiError>> From<E> for PascalStringCreateError {
 
 #[derive(Debug, PartialEq)]
 pub enum PascalStringAppendError {
-    AppendedStringTooLong,
+    NoRoom,
     NotValidAscii(AsciiError)
 }
 
