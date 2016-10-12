@@ -141,6 +141,11 @@ impl PascalString {
         Some(c)
     }
 
+    /// Remove a character from the `AsciiString` at `index`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `index` is larger than `self.len()`.
     pub fn remove(&mut self, index: u8) -> AsciiChar {
         assert!(self.len < index);
         let len = self.len as usize;
@@ -157,6 +162,11 @@ impl PascalString {
         c
     }
 
+    /// Insert a character into the `AsciiString` at `index`.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `index` is larger than `self.len()`, or if the `PascalString` is full.
     #[inline]
     pub fn insert<C: ToAsciiChar>(&mut self, ch: C, index: u8) {
         self._insert(AsciiChar::from(ch).unwrap(), index)
@@ -465,6 +475,7 @@ impl IntoIterator for PascalString {
     }
 }
 
+/// An iterator from a `PascalString`. Has ownership of the iterated `PascalString`.
 #[derive(Debug)]
 pub struct IntoChars(PascalString);
 
@@ -481,9 +492,12 @@ impl ExactSizeIterator for IntoChars {
     }
 }
 
+/// Indicates the range of errors which can occur from creating a new `PascalString`.
 #[derive(Debug, PartialEq)]
 pub enum PascalStringCreateError {
+    /// The data provided to the constructor was larger than the `PascalString` could store.
     InputTooLong,
+    /// The data provided was not correctly encoded as ascii.
     NotValidAscii(AsciiError)
 }
 
@@ -494,9 +508,12 @@ impl<E: Into<AsciiError>> From<E> for PascalStringCreateError {
     }
 }
 
+/// Indicates teh range of errors which can occur from appending string data to a `PascalString`.
 #[derive(Debug, PartialEq)]
 pub enum PascalStringAppendError {
+    /// There is no room to store the appended data.
     NoRoom,
+    /// The data provided was not correctly encoded as ascii.
     NotValidAscii(AsciiError)
 }
 
@@ -507,9 +524,12 @@ impl<E: Into<AsciiError>> From<E> for PascalStringAppendError {
     }
 }
 
+/// An error type which abstracts over ascii conversion errors.
 #[derive(Debug, PartialEq)]
 pub enum AsciiError {
+    /// A character was not encoded as ascii.
     Char(ToAsciiCharError),
+    /// A string was not encoded as ascii.
     Str(AsAsciiStrError)
 }
 
