@@ -1,7 +1,7 @@
 use ascii::{AsAsciiStrError, AsciiChar, AsciiStr, AsciiString, ToAsciiChar, ToAsciiCharError};
 use std::ascii::AsciiExt;
 use std::borrow::{Borrow, BorrowMut};
-use std::cmp::{Eq, PartialEq};
+use std::cmp::PartialEq;
 use std::convert::{AsRef, AsMut, From, Into};
 use std::error::Error;
 use std::hash::{Hash, Hasher};
@@ -15,6 +15,7 @@ use ::{PascalStr, PASCAL_STRING_BUF_SIZE};
 /// the first byte storing the length.
 ///
 /// This string type uses Ascii encoding.
+#[derive(Eq)]
 pub struct PascalString {
     /// The length of this string.
     len: u8,
@@ -243,14 +244,13 @@ impl Clone for PascalString {
     }
 }
 
-impl Eq for PascalString { }
-
-impl PartialEq for PascalString {
-    fn eq(&self, other: &PascalString) -> bool {
-        if self.len != other.len {
+impl<S: AsRef<PascalStr>> PartialEq<S> for PascalString {
+    fn eq(&self, other: &S) -> bool {
+        let other = other.as_ref();
+        if self.len() != other.len() {
             return false;
         }
-        self.chars.iter().zip(other.chars.iter()).all(|(c0, c1)| c0 == c1)
+        self.chars().zip(other.chars()).all(|(c0, c1)| c0 == c1)
     }
 }
 
