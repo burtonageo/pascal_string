@@ -83,6 +83,7 @@ mod tests {
             assert_eq!(iter.next(), Some(&AsciiChar::A));
             assert_eq!(iter.next(), Some(&AsciiChar::S));
             assert_eq!(iter.next(), Some(&AsciiChar::D));
+            assert_eq!(iter.next(), None);
         }
     }
 
