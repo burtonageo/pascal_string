@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Improve wording of crate-level doc comment.
 - Improve doc comment for `IntoChars` struct.
+- Improve doc comment for `PascalStr::get_unchecked`.
+- Remove a false assertion on `PascalStr::get_unchecked` that would fire if `self.is_full()` was true.
 - Improve README documentation.
 
 ## [0.2.1] - 2016-10-13
