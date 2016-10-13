@@ -13,7 +13,7 @@
 //!
 //! * You know that you absolutely, certainly cannot do without heap allocation.
 //! * You need to store your string data inline into your `struct` type - for example if you will allocate a bunch
-//!   into a pool allocator, and cannot afford the heap fragmentation.
+//!   of these custom `struct` types into a pool allocator, and cannot afford the heap fragmentation.
 //! * You will keep, allocate, and deallocate a *lot* of short strings in your program.
 
 extern crate ascii;
