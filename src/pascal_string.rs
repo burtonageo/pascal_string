@@ -553,7 +553,7 @@ impl<E: Into<AsciiError>> From<E> for PascalStringCreateError {
     }
 }
 
-/// Indicates teh range of errors which can occur from appending string data to a `PascalString`.
+/// Indicates the range of errors which can occur from appending string data to a `PascalString`.
 #[derive(Debug, PartialEq)]
 pub enum PascalStringAppendError {
     /// There is no room to store the appended data.
