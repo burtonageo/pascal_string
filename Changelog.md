@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 ### Added
 - Implement `std::str::FromStr` for `PascalString`.
+- Implement `PartialOrd<AsRef<PascalStr>>`, `PartialEq<AsRef<PascalStr>>`, `Ord` and `Eq` for PascalString.
 
 ### Fixed
 - Improve wording of crate-level doc comment.
