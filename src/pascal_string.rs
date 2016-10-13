@@ -209,15 +209,6 @@ impl PascalString {
         self.into()
     }
 
-    /// Get a character in the string, without checking if the index is within the bounds of `len()`.
-    ///
-    /// This method cannot cause memory unsafety because of the size of `index`. However, it can give access
-    /// to stale characters if `index` is greater than `len()`, and `len() < 255`.
-    #[inline]
-    pub fn get_unchecked(&self, index: u8) -> AsciiChar {
-        self.chars[index as usize]
-    }
-
     /// Sets the byte beyond the end of `len` to `AsciiChar::Null`, if this `PascalString` isn't full.
     ///
     /// Used to ensure that `PascalStr::as_cstr()` works correctly.

@@ -5,6 +5,7 @@ use std::convert::AsRef;
 use std::error::Error;
 use std::ffi::{CStr, CString};
 use std::fmt;
+use std::isize;
 use std::iter::{ExactSizeIterator, Iterator};
 use std::ops::{Index, IndexMut, Range, RangeFull, RangeFrom, RangeTo};
 use std::slice::{Iter, IterMut};
@@ -82,6 +83,22 @@ impl PascalStr {
     #[inline]
     pub fn chars_mut<'a>(&'a mut self) -> CharsMut<'a> {
         CharsMut(self.string.as_mut_slice().iter_mut())
+    }
+
+    /// Get a character in the string, without checking if the index is within the bounds of `len()`.
+    ///
+    /// This method cannot cause memory unsafety because of the size of `index`. However, it can give access
+    /// to stale characters if `index` is greater than or equal to `self.len()` or `isize::MAX`, and `self.is_full()`
+    /// is `false`.
+    #[inline]
+    pub fn get_unchecked(&self, index: usize) -> AsciiChar {
+        assert!(!self.is_full());
+        assert!(index < self.len());
+        assert!(index <= (isize::MAX as usize));
+        let ptr = self.as_ptr();
+        unsafe {
+            *ptr.offset(index as isize)
+        }
     }
 }
 
