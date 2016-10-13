@@ -33,6 +33,7 @@ mod tests {
     use ascii::*;
     use std::borrow::Cow;
     use std::ffi::{CStr, CString};
+    use std::iter::IntoIterator;
 
     #[test]
     fn test_string_creation() {
@@ -78,12 +79,21 @@ mod tests {
 
         {
             let string2 = PascalString::from("WASD").unwrap();
-            let mut iter = string2.chars();
-            assert_eq!(iter.next(), Some(&AsciiChar::W));
-            assert_eq!(iter.next(), Some(&AsciiChar::A));
-            assert_eq!(iter.next(), Some(&AsciiChar::S));
-            assert_eq!(iter.next(), Some(&AsciiChar::D));
-            assert_eq!(iter.next(), None);
+            {
+                let mut chars_iter = string2.chars();
+                assert_eq!(chars_iter.next(), Some(&AsciiChar::W));
+                assert_eq!(chars_iter.next(), Some(&AsciiChar::A));
+                assert_eq!(chars_iter.next(), Some(&AsciiChar::S));
+                assert_eq!(chars_iter.next(), Some(&AsciiChar::D));
+                assert_eq!(chars_iter.next(), None);
+            }
+
+            let mut into_chars = string2.into_iter();
+            assert_eq!(into_chars.next(), Some(AsciiChar::W));
+            assert_eq!(into_chars.next(), Some(AsciiChar::A));
+            assert_eq!(into_chars.next(), Some(AsciiChar::S));
+            assert_eq!(into_chars.next(), Some(AsciiChar::D));
+            assert_eq!(into_chars.next(), None);
         }
     }
 
