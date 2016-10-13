@@ -494,7 +494,7 @@ impl IntoIterator for PascalString {
     }
 }
 
-/// An iterator from a `PascalString`. Has ownership of the iterated `PascalString`.
+/// An iterator over the buffer of a `PascalString`. Has ownership of the iterated `PascalString`.
 #[derive(Debug)]
 pub struct IntoChars(PascalString);
 
