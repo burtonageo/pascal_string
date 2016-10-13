@@ -7,7 +7,8 @@ use std::error::Error;
 use std::hash::{Hash, Hasher};
 use std::iter::{ExactSizeIterator, FromIterator, IntoIterator};
 use std::ops::{Deref, DerefMut};
-use std::{fmt, mem, ptr, slice, str};
+use std::str::{self, FromStr};
+use std::{fmt, mem, ptr, slice};
 use ::{PascalStr, PASCAL_STRING_BUF_SIZE};
 
 /// An owned `PascalString`. This string type stores its data the stack. It is always 256 bytes long, with
@@ -462,6 +463,13 @@ impl Into<Vec<AsciiChar>> for PascalString {
 impl Into<AsciiString> for PascalString {
     fn into(self) -> AsciiString {
         AsciiString::from_ascii(self).unwrap()
+    }
+}
+
+impl FromStr for PascalString {
+    type Err = PascalStringCreateError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        PascalString::from(s)
     }
 }
 
