@@ -1,7 +1,7 @@
 use ascii::{AsAsciiStrError, AsciiChar, AsciiStr, AsciiString, ToAsciiChar, ToAsciiCharError};
 use std::ascii::AsciiExt;
 use std::borrow::{Borrow, BorrowMut};
-use std::cmp::{Ord, Ordering, PartialEq, PartialOrd};
+use std::cmp::Ordering;
 use std::convert::{AsRef, AsMut, From, Into};
 use std::error::Error;
 use std::hash::{Hash, Hasher};

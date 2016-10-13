@@ -1,7 +1,7 @@
 use ascii::{AsciiChar, AsciiStr};
 use std::ascii::AsciiExt;
 use std::borrow::{Cow, ToOwned};
-use std::cmp::{Ord, Ordering, PartialOrd};
+use std::cmp::Ordering;
 use std::convert::AsRef;
 use std::error::Error;
 use std::ffi::{CStr, CString};
@@ -13,7 +13,7 @@ use std::slice::{Iter, IterMut};
 use ::{PASCAL_STRING_BUF_SIZE, PascalString};
 
 /// A borrowed slice from a `PascalString`. Does not own its data.
-#[derive(Hash)]
+#[derive(Eq, Hash, Ord)]
 pub struct PascalStr {
     /// The `AsciiStr`, borrowed from the original `PascalString`
     string: AsciiStr
@@ -103,8 +103,6 @@ impl PascalStr {
     }
 }
 
-impl Eq for PascalStr { }
-
 impl<S: AsRef<PascalStr> + ?Sized> PartialEq<S> for PascalStr {
     fn eq(&self, other: &S) -> bool {
         let other = other.as_ref();
@@ -116,12 +114,6 @@ impl<S: AsRef<PascalStr> + ?Sized> PartialOrd<S> for PascalStr {
     fn partial_cmp(&self, other: &S) -> Option<Ordering> {
         let other = other.as_ref();
         self.string.partial_cmp(&other.string)
-    }
-}
-
-impl Ord for PascalStr {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.string.cmp(&other.string)
     }
 }
 
