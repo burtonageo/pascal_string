@@ -5,11 +5,10 @@ use std::cmp::Ordering;
 use std::convert::AsRef;
 use std::error::Error;
 use std::ffi::{CStr, CString};
-use std::fmt;
-use std::isize;
 use std::iter::{ExactSizeIterator, Iterator};
 use std::ops::{Index, IndexMut, Range, RangeFull, RangeFrom, RangeTo};
 use std::slice::{Iter, IterMut};
+use std::{fmt, isize, mem, slice};
 use ::{PASCAL_STRING_BUF_SIZE, PascalString};
 
 /// A borrowed slice from a `PascalString`. Does not own its data.
@@ -86,6 +85,15 @@ impl PascalStr {
         CharsMut(self.string.as_mut_slice().iter_mut())
     }
 
+    /// Get an iterator over the lines of the internal character array.
+    #[inline]
+    pub fn lines(&self) -> Lines {
+        Lines {
+            current_index: 0,
+            string: &self
+        }
+    }
+
     /// Get a character in the string, without checking if the index is within the bounds of `len()`.
     ///
     /// This method cannot cause memory unsafety because `index` is bounds checked within the maximum possible
@@ -151,6 +159,18 @@ impl AsciiExt for PascalStr {
 
     fn make_ascii_lowercase(&mut self) {
         self.string.make_ascii_lowercase()
+    }
+}
+
+impl fmt::Debug for PascalStr {
+    fn fmt(&self, fmtr: &mut fmt::Formatter) -> fmt::Result {
+        fmtr.pad(self.as_ref())
+    }
+}
+
+impl fmt::Display for PascalStr {
+    fn fmt(&self, fmtr: &mut fmt::Formatter) -> fmt::Result {
+        fmtr.pad(self.as_ref())
     }
 }
 
@@ -483,6 +503,52 @@ impl<'a> ExactSizeIterator for CharsMut<'a> {
     #[inline]
     fn len(&self) -> usize {
         self.0.len()
+    }
+}
+
+/// An iterator over the lines of the internal character array.
+#[derive(Debug)]
+pub struct Lines<'a> {
+    current_index: usize,
+    string: &'a PascalStr
+}
+
+impl<'a> Iterator for Lines<'a> {
+    type Item = &'a PascalStr;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let curr_idx = self.current_index;
+        let len = self.string.len();
+        if curr_idx >= len {
+            return None;
+        }
+
+        let mut next_idx = None;
+        for i in curr_idx..len {
+            if self.string[i] == AsciiChar::LineFeed {
+                next_idx = Some(i);
+                break;
+            }
+        }
+        let next_idx = match next_idx {
+            Some(i) => i,
+            None => return None
+        };
+        let line: &PascalStr = unsafe {
+            let ptr = self.string.as_ptr().offset(curr_idx as isize);
+            let len = next_idx - curr_idx;
+            let slice = slice::from_raw_parts(ptr, len);
+            mem::transmute(slice)
+        };
+        self.current_index = next_idx + 1; // skip the linefeed
+        Some(line)
+    }
+}
+
+impl<'a> ExactSizeIterator for Lines<'a> {
+    #[inline]
+    fn len(&self) -> usize {
+        self.string.chars().skip(self.current_index).filter(|&&c| c == AsciiChar::LineFeed).count()
     }
 }
 

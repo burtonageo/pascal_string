@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add `?Sized` specifier to the `PartialOrd<_>` and `PartialEq<_>` impls for `PascalString`.
 - Use `Ord::cmp(&[AsciiChar])` in `Ord::cmp(&AsciiString)` implementation.
 
+### Added
+- Add `PascalStr::lines()`, which is used to iterate over the lines of the `PascalStr`.
+
 ## [0.3.0] - 2016-10-13
 ### Added
 - Implement `std::str::FromStr` for `PascalString`.

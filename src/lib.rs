@@ -21,7 +21,7 @@ extern crate ascii;
 mod pascal_str;
 mod pascal_string;
 
-pub use pascal_str::{Chars, CharsMut, PascalStr};
+pub use pascal_str::{Chars, CharsMut, Lines, PascalStr};
 pub use pascal_string::{IntoChars, PascalString, PascalStringAppendError, PascalStringCreateError, AsciiError};
 use std::u8;
 
@@ -94,6 +94,15 @@ mod tests {
             assert_eq!(into_chars.next(), Some(AsciiChar::S));
             assert_eq!(into_chars.next(), Some(AsciiChar::D));
             assert_eq!(into_chars.next(), None);
+        }
+    }
+
+    #[test]
+    fn test_lines_iteration() {
+        let string = "hello\n,\nmy\ndarling".to_string();
+        let pstring = PascalString::from(&string).unwrap();
+        for (s0, s1) in pstring.lines().zip(string.split_whitespace()) {
+            assert_eq!(s0.as_str(), s1);
         }
     }
 
