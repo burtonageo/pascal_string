@@ -1,6 +1,7 @@
 use ascii::{AsciiChar, AsciiStr};
 use std::ascii::AsciiExt;
 use std::borrow::{Cow, ToOwned};
+use std::cmp::{Ord, Ordering, PartialOrd};
 use std::convert::AsRef;
 use std::error::Error;
 use std::ffi::{CStr, CString};
@@ -12,7 +13,7 @@ use std::slice::{Iter, IterMut};
 use ::{PASCAL_STRING_BUF_SIZE, PascalString};
 
 /// A borrowed slice from a `PascalString`. Does not own its data.
-#[derive(Eq, Hash, PartialEq, PartialOrd)]
+#[derive(Hash)]
 pub struct PascalStr {
     /// The `AsciiStr`, borrowed from the original `PascalString`
     string: AsciiStr
@@ -102,6 +103,28 @@ impl PascalStr {
     }
 }
 
+impl Eq for PascalStr { }
+
+impl<S: AsRef<PascalStr> + ?Sized> PartialEq<S> for PascalStr {
+    fn eq(&self, other: &S) -> bool {
+        let other = other.as_ref();
+        self.string.eq(&other.string)
+    }
+}
+
+impl<S: AsRef<PascalStr> + ?Sized> PartialOrd<S> for PascalStr {
+    fn partial_cmp(&self, other: &S) -> Option<Ordering> {
+        let other = other.as_ref();
+        self.string.partial_cmp(&other.string)
+    }
+}
+
+impl Ord for PascalStr {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.string.cmp(&other.string)
+    }
+}
+
 impl AsciiExt for PascalStr {
     type Owned = PascalString;
 
@@ -140,6 +163,12 @@ impl ToOwned for PascalStr {
     type Owned = PascalString;
     fn to_owned(&self) -> Self::Owned {
         PascalString::from(&self.string).unwrap()
+    }
+}
+
+impl AsRef<PascalStr> for PascalStr {
+    fn as_ref(&self) -> &Self {
+        &self
     }
 }
 
