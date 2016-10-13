@@ -257,7 +257,9 @@ impl<S: AsRef<PascalStr> + ?Sized> PartialEq<S> for PascalString {
 impl Ord for PascalString {
     #[inline]
     fn cmp(&self, other: &Self) -> Ordering {
-        self.partial_cmp(other).unwrap()
+        let ascii0: &[AsciiChar] = &self.chars;
+        let ascii1: &[AsciiChar] = &other.chars;
+        ascii0.cmp(ascii1)
     }
 }
 
