@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Improve wording of crate-level doc comment.
+- Improve doc comment for `IntoChars` struct.
 
 ## [0.2.1] - 2016-10-13
 ### Fixed
