@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Implement `std::str::FromStr` for `PascalString`.
 
+### Fixed
+- Improve wording of crate-level doc comment.
+
 ## [0.2.1] - 2016-10-13
 ### Fixed
 - Fixed `PascalString::remove` to avoid panicking with correct input.
