@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 ### Fixed
 - Add `?Sized` specifier to the `PartialOrd<_>` and `PartialEq<_>` impls for `PascalString`.
+- Use `Ord::cmp(&[AsciiChar])` in `Ord::cmp(&AsciiString)` implementation.
 
 ## [0.3.0] - 2016-10-13
 ### Added
