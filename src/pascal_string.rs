@@ -1,7 +1,7 @@
 use ascii::{AsAsciiStrError, AsciiChar, AsciiStr, AsciiString, ToAsciiChar, ToAsciiCharError};
 use std::ascii::AsciiExt;
 use std::borrow::{Borrow, BorrowMut};
-use std::cmp::PartialEq;
+use std::cmp::{Ord, Ordering, PartialEq, PartialOrd};
 use std::convert::{AsRef, AsMut, From, Into};
 use std::error::Error;
 use std::hash::{Hash, Hasher};
@@ -251,6 +251,20 @@ impl<S: AsRef<PascalStr>> PartialEq<S> for PascalString {
             return false;
         }
         self.chars().zip(other.chars()).all(|(c0, c1)| c0 == c1)
+    }
+}
+
+impl Ord for PascalString {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.partial_cmp(other).unwrap()
+    }
+}
+
+impl<S: AsRef<PascalStr>> PartialOrd<S> for PascalString {
+    fn partial_cmp(&self, other: &S) -> Option<Ordering> {
+        let other: &AsciiStr = other.as_ref().as_ref();
+        let self_asciistr: &AsciiStr = self.as_ref();
+        self_asciistr.partial_cmp(&other)
     }
 }
 
