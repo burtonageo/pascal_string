@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unimplemented
+### Fixed
+- Add `?Sized` specifier to the `PartialOrd<_>` and `PartialEq<_>` impls for `PascalString`.
+
 ## [0.3.0] - 2016-10-13
 ### Added
 - Implement `std::str::FromStr` for `PascalString`.
