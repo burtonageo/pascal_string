@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) 
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unimplemented
+## Unreleased
 ### Fixed
 - Add `?Sized` specifier to the `PartialOrd<_>` and `PartialEq<_>` impls for `PascalString`.
 
