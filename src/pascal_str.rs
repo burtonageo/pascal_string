@@ -88,14 +88,17 @@ impl PascalStr {
 
     /// Get a character in the string, without checking if the index is within the bounds of `len()`.
     ///
-    /// This method cannot cause memory unsafety because of the size of `index`. However, it can give access
+    /// This method cannot cause memory unsafety because `index` is bounds checked within the maximum possible
+    /// length of the `PascalStr`, which means that it cannot read uninitialised memory. However, it can give access
     /// to stale characters if `index` is greater than or equal to `self.len()` or `isize::MAX`, and `self.is_full()`
     /// is `false`.
+    ///
+    /// # Panics
+    ///
+    /// This method will panic if `index` is larger than `u8::MAX`(255).
     #[inline]
     pub fn get_unchecked(&self, index: usize) -> AsciiChar {
-        assert!(!self.is_full());
-        assert!(index < self.len());
-        assert!(index <= (isize::MAX as usize));
+        assert!(index < PASCAL_STRING_BUF_SIZE);
         let ptr = self.as_ptr();
         unsafe {
             *ptr.offset(index as isize)
