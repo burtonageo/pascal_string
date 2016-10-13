@@ -147,17 +147,18 @@ impl PascalString {
     ///
     /// # Panics
     ///
-    /// Panics if `index` is larger than `self.len()`.
+    /// Panics if `index` is larger than `self.len()`, or if `self.is_empty()` is `true`.
     pub fn remove(&mut self, index: u8) -> AsciiChar {
-        assert!(self.len < index);
+        assert!(self.len > index);
+        assert!(!self.is_empty());
         let len = self.len as usize;
-        let index = index as isize;
-        let c = self[len];
+        let index = index as usize;
+        let c = self[index];
         // Shift everything to the right of the removed character to the left to cover up the hole
         // left.
         unsafe {
-            let ptr = self.as_mut_ptr().offset(index);
-            ptr::copy(ptr.offset(1), ptr, len - index.abs() as usize - 1);
+            let ptr = self.as_mut_ptr().offset(index as isize);
+            ptr::copy(ptr.offset(1), ptr, len - index - 1);
         }
         self.len -= 1;
         self.set_trailing_byte_to_null();
@@ -175,7 +176,7 @@ impl PascalString {
     }
 
     fn _insert(&mut self, ch: AsciiChar, index: u8) {
-        assert!(self.len < index);
+        assert!(self.len > index);
         assert!(!self.is_full());
         let len = self.len as usize;
         let index = index as isize;
@@ -492,7 +493,11 @@ pub struct IntoChars(PascalString);
 impl Iterator for IntoChars {
     type Item = AsciiChar;
     fn next(&mut self) -> Option<Self::Item> {
-        self.0.pop()
+        if !self.0.is_empty() {
+            Some(self.0.remove(0))
+        } else {
+            None
+        }
     }
 }
 
