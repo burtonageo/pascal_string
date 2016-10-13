@@ -244,7 +244,7 @@ impl Clone for PascalString {
     }
 }
 
-impl<S: AsRef<PascalStr>> PartialEq<S> for PascalString {
+impl<S: AsRef<PascalStr> + ?Sized> PartialEq<S> for PascalString {
     fn eq(&self, other: &S) -> bool {
         let other = other.as_ref();
         if self.len() != other.len() {
@@ -261,7 +261,7 @@ impl Ord for PascalString {
     }
 }
 
-impl<S: AsRef<PascalStr>> PartialOrd<S> for PascalString {
+impl<S: AsRef<PascalStr> + ?Sized> PartialOrd<S> for PascalString {
     fn partial_cmp(&self, other: &S) -> Option<Ordering> {
         let other: &AsciiStr = other.as_ref().as_ref();
         let self_asciistr: &AsciiStr = self.as_ref();
