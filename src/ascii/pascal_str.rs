@@ -76,13 +76,13 @@ impl PascalStr {
 
     /// Get an immutable iterator to the internal character array.
     #[inline]
-    pub fn chars<'a>(&'a self) -> Chars<'a> {
+    pub fn chars(&self) -> Chars {
         Chars(self.string.as_slice().iter())
     }
 
     /// Get a mutable iterator to the internal character array.
     #[inline]
-    pub fn chars_mut<'a>(&'a mut self) -> CharsMut<'a> {
+    pub fn chars_mut(&mut self) -> CharsMut {
         CharsMut(self.string.as_mut_slice().iter_mut())
     }
 
