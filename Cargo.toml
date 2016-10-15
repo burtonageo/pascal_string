@@ -1,6 +1,6 @@
 [package]
 name = "pascal_string"
-version = "0.3.0"
+version = "0.4.0"
 authors = ["George Burton <burtonageo@gmail.com>"]
 description = "Pascal strings in Rust."
 license = "MIT"
