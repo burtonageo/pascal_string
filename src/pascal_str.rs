@@ -8,7 +8,7 @@ use std::ffi::{CStr, CString};
 use std::iter::{ExactSizeIterator, Iterator};
 use std::ops::{Index, IndexMut, Range, RangeFull, RangeFrom, RangeTo};
 use std::slice::{Iter, IterMut};
-use std::{fmt, isize, mem, slice};
+use std::{fmt, isize};
 use ::{PASCAL_STRING_BUF_SIZE, PascalString};
 
 /// A borrowed slice from a `PascalString`. Does not own its data.
@@ -514,7 +514,7 @@ pub struct Lines<'a> {
 }
 
 impl<'a> Iterator for Lines<'a> {
-    type Item = &'a PascalStr;
+    type Item = &'a AsciiStr;
 
     fn next(&mut self) -> Option<Self::Item> {
         let curr_idx = self.current_index;
@@ -534,12 +534,8 @@ impl<'a> Iterator for Lines<'a> {
             Some(i) => i,
             None => return None
         };
-        let line: &PascalStr = unsafe {
-            let ptr = self.string.as_ptr().offset(curr_idx as isize);
-            let len = next_idx - curr_idx;
-            let slice = slice::from_raw_parts(ptr, len);
-            mem::transmute(slice)
-        };
+        let line: &AsciiStr = From::from(&self.string[curr_idx..next_idx]);
+
         self.current_index = next_idx + 1; // skip the linefeed
         Some(line)
     }
