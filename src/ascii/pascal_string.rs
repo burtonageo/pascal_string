@@ -2,7 +2,6 @@ use ascii_crate::{AsAsciiStrError, AsciiChar, AsciiStr, AsciiString, ToAsciiChar
 use std::ascii::AsciiExt;
 use std::borrow::{Borrow, BorrowMut};
 use std::cmp::Ordering;
-use std::convert::{AsRef, AsMut, From, Into};
 use std::error::Error;
 use std::hash::{Hash, Hasher};
 use std::iter::{ExactSizeIterator, FromIterator, IntoIterator};

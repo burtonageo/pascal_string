@@ -2,7 +2,6 @@ use ascii_crate::{AsciiChar, AsciiStr};
 use std::ascii::AsciiExt;
 use std::borrow::{Cow, ToOwned};
 use std::cmp::Ordering;
-use std::convert::AsRef;
 use std::error::Error;
 use std::ffi::{CStr, CString};
 use std::iter::{ExactSizeIterator, Iterator};
