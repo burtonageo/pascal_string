@@ -18,7 +18,10 @@
 
 extern crate ascii as ascii_crate;
 
+/// Ascii encoded pascal strings.
 pub mod ascii;
+
+/// Utf8 encoded pascal strings.
 pub mod utf8;
 
 const PASCAL_STRING_BUF_SIZE: usize = ::std::u8::MAX as usize;
