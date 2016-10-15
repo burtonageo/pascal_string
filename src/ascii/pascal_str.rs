@@ -1,4 +1,4 @@
-use ascii::{AsciiChar, AsciiStr};
+use ascii_crate::{AsciiChar, AsciiStr};
 use std::ascii::AsciiExt;
 use std::borrow::{Cow, ToOwned};
 use std::cmp::Ordering;
@@ -9,7 +9,8 @@ use std::iter::{ExactSizeIterator, Iterator};
 use std::ops::{Index, IndexMut, Range, RangeFull, RangeFrom, RangeTo};
 use std::slice::{Iter, IterMut};
 use std::{fmt, isize};
-use ::{PASCAL_STRING_BUF_SIZE, PascalString};
+use ::ascii::PascalString;
+use ::PASCAL_STRING_BUF_SIZE;
 
 /// A borrowed slice from a `PascalString`. Does not own its data.
 #[derive(Eq, Hash, Ord)]

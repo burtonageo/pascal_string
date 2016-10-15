@@ -7,7 +7,7 @@ pub use self::pascal_string::{IntoChars, PascalString, PascalStringAppendError, 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use ascii::*;
+    use ascii_crate::*;
     use std::borrow::Cow;
     use std::ffi::{CStr, CString};
     use std::iter::IntoIterator;

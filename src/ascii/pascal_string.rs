@@ -1,4 +1,4 @@
-use ascii::{AsAsciiStrError, AsciiChar, AsciiStr, AsciiString, ToAsciiChar, ToAsciiCharError};
+use ascii_crate::{AsAsciiStrError, AsciiChar, AsciiStr, AsciiString, ToAsciiChar, ToAsciiCharError};
 use std::ascii::AsciiExt;
 use std::borrow::{Borrow, BorrowMut};
 use std::cmp::Ordering;
@@ -9,7 +9,8 @@ use std::iter::{ExactSizeIterator, FromIterator, IntoIterator};
 use std::ops::{Deref, DerefMut};
 use std::str::{self, FromStr};
 use std::{fmt, mem, ptr, slice};
-use ::{PascalStr, PASCAL_STRING_BUF_SIZE};
+use ::ascii::PascalStr;
+use ::PASCAL_STRING_BUF_SIZE;
 
 /// An owned `PascalString`. This string type stores its data the stack. It is always 256 bytes long, with
 /// the first byte storing the length.

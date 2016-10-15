@@ -16,7 +16,7 @@
 //!   of these custom `struct` types into a pool allocator, and cannot afford the heap fragmentation.
 //! * You will keep, allocate, and deallocate a *lot* of short strings in your program.
 
-extern crate ascii;
+extern crate ascii as ascii_crate;
 
 pub mod ascii;
 pub mod utf8;
