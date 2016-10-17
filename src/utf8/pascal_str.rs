@@ -1,5 +1,6 @@
 use std::borrow::{Cow, ToOwned};
 use std::ffi::{CStr, CString};
+use std::str;
 
 #[derive(Hash)]
 pub struct PascalStr {
@@ -14,7 +15,7 @@ impl PascalStr {
 
     #[inline]
     pub fn as_mut_ptr(&mut self) -> *mut u8 {
-        (&self.string).as_mut_ptr()
+        &mut self.string as *mut str as *mut u8
     }
 
     #[inline]
@@ -24,15 +25,36 @@ impl PascalStr {
 
     #[inline]
     pub fn as_bytes(&self) -> &[u8] {
-        unimplemented!();
+        self.string.as_bytes()
+    }
+
+    pub fn as_cstr(&self) -> Result<Cow<CStr>, InteriorNullError> {
+        unimplemented!()
     }
 
     #[inline]
-    pub fn
+    pub fn len(&self) -> usize {
+        self.string.len()
+    }
+
+    #[inline]
+    pub fn chars(&self) -> Chars {
+        self.string.chars()
+    }
+
+    #[inline]
+    pub fn bytes(&self) -> Bytes {
+        self.string.bytes()
+    }
+
+    #[inline]
+    pub fn lines(&self) -> Lines {
+        self.string.lines()
+    }
 }
 
-pub struct Chars;
+pub type Chars<'a> = str::Chars<'a>;
+pub type Bytes<'a> = str::Bytes<'a>;
+pub type Lines<'a> = str::Lines<'a>;
 
-pub struct CharsMut;
-
-pub struct Lines;
+pub struct InteriorNullError;
