@@ -2,6 +2,7 @@ use std::borrow::{Borrow, BorrowMut};
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 use std::{mem, ptr, str};
+use odds::char::{encode_utf8, EncodeUtf8Error};
 use ::utf8::PascalStr;
 use ::PASCAL_STRING_BUF_SIZE;
 
@@ -33,9 +34,11 @@ impl PascalString {
         self.try_push(ch).unwrap()
     }
 
-    pub fn try_push(&mut self, ch: char) -> Result<(), PascalStringAppendError> {
-        let unich = UniChar::from(ch);
-        unimplemented!();
+    #[inline]
+    pub fn try_push(&mut self, ch: char) -> Result<(), EncodeUtf8Error> {
+        let num_bytes_extended = try!(encode_utf8(ch, &mut self.chars_buf[self.len as usize..]));
+        self.len += num_bytes_extended as u8;
+        Ok(())
     }
 
     #[inline]
