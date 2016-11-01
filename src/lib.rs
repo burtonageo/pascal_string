@@ -17,6 +17,7 @@
 //! * You will keep, allocate, and deallocate a *lot* of short strings in your program.
 
 extern crate ascii as ascii_crate;
+extern crate odds;
 
 /// Ascii encoded pascal strings.
 pub mod ascii;
