@@ -138,37 +138,3 @@ impl From<EncodeUtf8Error> for PascalStringAppendError {
         PascalStringAppendError::EncodeError(e)
     }
 }
-
-/// A view into the individual bytes that make up a `char`.
-///
-/// Use the `From` trait to convert a `char` to a `UniChar` without using `unsafe`.
-#[derive(Clone, Copy, Default, Eq, PartialEq)]
-struct UniChar {
-    /// First byte.
-    b0: u8,
-    /// Second byte.
-    b1: u8,
-    /// Third byte.
-    b2: u8,
-    /// Fourth byte.
-    b3: u8
-}
-
-impl UniChar {
-    fn num_bytes(&self) -> u8 {
-        unimplemented!()
-    }
-}
-
-impl From<char> for UniChar {
-    fn from(ch: char) -> Self {
-        let chn: u32 = ch as u32;
-        UniChar {
-            b0: ((chn & 0xff000000u32) >> 24) as u8,
-            b1: ((chn & 0x00ff0000u32) >> 16) as u8,
-            b2: ((chn & 0x0000ff00u32) >> 8) as u8,
-            b3:  (chn & 0x000000ffu32) as u8
-        }
-    }
-}
-
