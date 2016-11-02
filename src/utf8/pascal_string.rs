@@ -1,7 +1,8 @@
 use std::borrow::{Borrow, BorrowMut};
+use std::error::Error;
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
-use std::{mem, ptr, str};
+use std::{fmt, mem, ptr, str};
 use odds::char::{encode_utf8, EncodeUtf8Error};
 use ::utf8::PascalStr;
 use ::PASCAL_STRING_BUF_SIZE;
@@ -42,17 +43,23 @@ impl PascalString {
     }
 
     #[inline]
-    pub fn push_str<S: AsRef<str>>(&mut self, s: &S) {
+    pub fn push_str<S: AsRef<str>>(&mut self, s: S) {
         self.try_push_str(s).unwrap()
     }
 
     #[inline]
-    pub fn try_push_str<S: AsRef<str>>(&mut self, s: &S) -> Result<(), PascalStringAppendError> {
+    pub fn try_push_str<S: AsRef<str>>(&mut self, s: S) -> Result<(), PascalStringAppendError> {
         self._try_push_str(s.as_ref())
     }
 
     fn _try_push_str(&mut self, s: &str) -> Result<(), PascalStringAppendError> {
-        unimplemented!()
+        if self.len() + s.len() > PASCAL_STRING_BUF_SIZE {
+            return Err(PascalStringAppendError::NoRoom);
+        }
+        for ch in s.chars() {
+            try!(self.try_push(ch))
+        }
+        Ok(())
     }
 }
 
@@ -101,9 +108,35 @@ impl DerefMut for PascalString {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub enum PascalStringAppendError {
     NoRoom,
+    EncodeError(EncodeUtf8Error)
+}
+
+impl fmt::Display for PascalStringAppendError {
+    fn fmt(&self, fmtr: &mut fmt::Formatter) -> fmt::Result {
+        let desc = self.description();
+        match *self {
+            PascalStringAppendError::NoRoom => fmtr.pad(desc),
+            PascalStringAppendError::EncodeError(ref e) => write!(fmtr, "{}: {:?}", desc, e)
+        }
+    }
+}
+
+impl Error for PascalStringAppendError {
+    fn description(&self) -> &str {
+        match *self {
+            PascalStringAppendError::NoRoom => "there is no room for the string to be appended",
+            PascalStringAppendError::EncodeError(_) => "there was a problem encoding the character as utf8: {:?}"
+        }
+    }
+}
+
+impl From<EncodeUtf8Error> for PascalStringAppendError {
+    fn from(e: EncodeUtf8Error) -> Self {
+        PascalStringAppendError::EncodeError(e)
+    }
 }
 
 /// A view into the individual bytes that make up a `char`.
