@@ -33,7 +33,7 @@ impl PascalString {
     /// If the contents of `s` can be stored in the buffer of the `PascalString`, then it returns
     /// `Ok`. Otherwise, returns `Err`.
     #[inline]
-    pub fn from(s: &str) -> Result<Self, ()> {
+    pub fn from(s: &str) -> Result<Self, PascalStringCreateError> {
         unimplemented!()
     }
 
@@ -133,6 +133,11 @@ impl DerefMut for PascalString {
     fn deref_mut(&mut self) -> &mut Self::Target {
         unsafe { mem::transmute(&mut self.chars_buf[0..(self.len as usize)]) }
     }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum PascalStringCreateError {
+    InputTooLong
 }
 
 #[derive(Debug, Clone, Copy)]

@@ -4,7 +4,7 @@ mod pascal_str;
 mod pascal_string;
 
 pub use self::pascal_str::{Chars, Bytes, Lines, PascalStr};
-pub use self::pascal_string::PascalString;
+pub use self::pascal_string::{PascalString, PascalStringAppendError, PascalStringCreateError};
 
 #[cfg(test)]
 mod tests {
@@ -13,20 +13,19 @@ mod tests {
     use std::ffi::{CStr, CString};
     use std::iter::IntoIterator;
 
-    /*
     #[test]
     fn test_string_creation() {
         let test = "Hello, my world!".to_owned();
         let test_pascal = PascalString::from(&test).unwrap();
         assert_eq!(&test, test_pascal.as_str());
 
-        let too_many_bytes = vec![12u8; 256];
-        assert!(match PascalString::from(&too_many_bytes) {
+        let too_many_bytes = [12u8; 256];
+        let too_long_a_string = String::from_utf8_lossy(&too_many_bytes);
+        assert!(match PascalString::from(&too_long_a_string) {
             Err(PascalStringCreateError::InputTooLong) => true,
             _ => false
         });
     }
-    */
 
     #[test]
     fn test_character_append() {
