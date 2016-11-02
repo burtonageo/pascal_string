@@ -34,7 +34,14 @@ impl PascalString {
     /// `Ok`. Otherwise, returns `Err`.
     #[inline]
     pub fn from(s: &str) -> Result<Self, PascalStringCreateError> {
-        unimplemented!()
+        if s.len() > PASCAL_STRING_BUF_SIZE {
+            return Err(PascalStringCreateError::InputTooLong);
+        }
+        let mut pstring = PascalString::new();
+        for ch in s.chars() {
+            pstring.push(ch)
+        }
+        Ok(pstring)
     }
 
     /// Push a character onto the end of the string's internal buffer.
