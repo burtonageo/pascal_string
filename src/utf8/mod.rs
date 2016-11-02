@@ -46,7 +46,7 @@ mod tests {
     fn test_string_append() {
         let mut string = PascalString::new();
         string.push_str("Hola, ");
-        string.push_str("Senor!");
-        assert_eq!(string.as_str(), "Hola, Senor!");
+        string.push_str("señor!");
+        assert_eq!(string.as_str(), "Hola, señor!");
     }
 }
