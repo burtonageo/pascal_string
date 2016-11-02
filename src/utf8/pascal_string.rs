@@ -20,21 +20,38 @@ pub struct PascalString {
 }
 
 impl PascalString {
+    /// Creates a new, empty `PascalString`.
     #[inline]
     pub fn new() -> Self {
         Default::default()
     }
 
+    /// Creates a new `PascalString` with the contents of `s`.
+    ///
+    /// # Returns
+    ///
+    /// If the contents of `s` can be stored in the buffer of the `PascalString`, then it returns
+    /// `Ok`. Otherwise, returns `Err`.
     #[inline]
-    pub fn from(s: &str) -> Self {
+    pub fn from(s: &str) -> Result<Self, ()> {
         unimplemented!()
     }
 
+    /// Push a character onto the end of the string's internal buffer.
+    ///
+    /// # Panics
+    ///
+    /// Panics if there is no room to store the `char`.
     #[inline]
     pub fn push(&mut self, ch: char) {
         self.try_push(ch).unwrap()
     }
 
+    /// Attempt to push a `char` onto the end of this string's internal buffer.
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(())` if the operation succeeded, otherwise an error is returned.
     #[inline]
     pub fn try_push(&mut self, ch: char) -> Result<(), EncodeUtf8Error> {
         let num_bytes_extended = try!(encode_utf8(ch, &mut self.chars_buf[self.len as usize..]));
@@ -42,11 +59,21 @@ impl PascalString {
         Ok(())
     }
 
+    /// Push a string onto the end of this string's internal buffer.
+    ///
+    /// # Panics
+    ///
+    /// Panics if there is no room to store the `str`.
     #[inline]
     pub fn push_str<S: AsRef<str>>(&mut self, s: S) {
         self.try_push_str(s).unwrap()
     }
 
+    /// Attempt to push a string onto the end of this string's internal buffer.
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(())` if the operation succeeded, otherwise an error is returned.
     #[inline]
     pub fn try_push_str<S: AsRef<str>>(&mut self, s: S) -> Result<(), PascalStringAppendError> {
         self._try_push_str(s.as_ref())
