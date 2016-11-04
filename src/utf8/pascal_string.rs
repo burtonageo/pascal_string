@@ -1,4 +1,5 @@
-use std::borrow::{Borrow, BorrowMut};
+use std::borrow::{Borrow, BorrowMut, Cow};
+use std::cmp::{Eq, PartialEq};
 use std::error::Error;
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
@@ -140,6 +141,82 @@ impl DerefMut for PascalString {
     #[inline]
     fn deref_mut(&mut self) -> &mut Self::Target {
         unsafe { mem::transmute(&mut self.chars_buf[0..(self.len as usize)]) }
+    }
+}
+
+impl AsRef<PascalStr> for PascalString {
+    #[inline]
+    fn as_ref(&self) -> &PascalStr {
+        self.deref()
+    }
+}
+
+impl AsRef<str> for PascalString {
+    #[inline]
+    fn as_ref(&self) -> &str {
+        self.as_str()
+    }
+}
+
+impl Borrow<PascalStr> for PascalString {
+    #[inline]
+    fn borrow(&self) -> &PascalStr {
+        self.deref()
+    }
+}
+
+impl BorrowMut<PascalStr> for PascalString {
+    #[inline]
+    fn borrow_mut(&mut self) -> &mut PascalStr {
+        self.deref_mut()
+    }
+}
+
+impl Eq for PascalString { }
+
+impl PartialEq for PascalString {
+    #[inline]
+    fn eq(&self, other: &PascalString) -> bool {
+        self.as_str().eq(other.as_str())
+    }
+}
+
+impl PartialEq<PascalStr> for PascalString {
+    #[inline]
+    fn eq(&self, other: &PascalStr) -> bool {
+        self.as_str().eq(other.as_str())
+    }
+}
+
+impl<'a> PartialEq<Cow<'a, PascalStr>> for PascalString {
+    #[inline]
+    fn eq(&self, other: &Cow<'a, PascalStr>) -> bool {
+        let other: &PascalStr = other.borrow();
+        let other: &str = other.as_str();
+        self.as_str().eq(other)
+    }
+}
+
+impl PartialEq<String> for PascalString {
+    #[inline]
+    fn eq(&self, other: &String) -> bool {
+        let other: &str = other.as_str();
+        self.as_str().eq(other)
+    }
+}
+
+impl PartialEq<str> for PascalString {
+    #[inline]
+    fn eq(&self, other: &str) -> bool {
+        self.as_str().eq(other)
+    }
+}
+
+impl<'a> PartialEq<Cow<'a, str>> for PascalString {
+    #[inline]
+    fn eq(&self, other: &Cow<'a, str>) -> bool {
+        let other: &str = other.borrow();
+        self.as_str().eq(other)
     }
 }
 
