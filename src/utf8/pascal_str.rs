@@ -2,6 +2,7 @@ use std::borrow::{Cow, ToOwned};
 use std::ffi::{CStr, CString};
 use std::str;
 use ::utf8::PascalString;
+use ::PASCAL_STRING_BUF_SIZE;
 
 #[derive(Hash)]
 pub struct PascalStr {
@@ -41,6 +42,16 @@ impl PascalStr {
     #[inline]
     pub fn len(&self) -> usize {
         self.string.len()
+    }
+
+    #[inline]
+    pub fn is_empty(&self) -> bool {
+        self.string.is_empty()
+    }
+
+    #[inline]
+    pub fn is_full(&self) -> bool {
+        self.len() == PASCAL_STRING_BUF_SIZE
     }
 
     #[inline]
