@@ -33,7 +33,8 @@ impl PascalString {
     /// If the contents of `s` can be stored in the buffer of the `PascalString`, then it returns
     /// `Ok`. Otherwise, returns `Err`.
     #[inline]
-    pub fn from(s: &str) -> Result<Self, PascalStringCreateError> {
+    pub fn from_str<S: AsRef<str>>(s: S) -> Result<Self, PascalStringCreateError> {
+        let s = s.as_ref();
         if s.len() > PASCAL_STRING_BUF_SIZE {
             return Err(PascalStringCreateError::InputTooLong);
         }

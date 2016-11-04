@@ -16,12 +16,12 @@ mod tests {
     #[test]
     fn test_string_creation() {
         let test = "Hello, my world!".to_owned();
-        let test_pascal = PascalString::from(&test).unwrap();
+        let test_pascal = PascalString::from_str(&test).unwrap();
         assert_eq!(&test, test_pascal.as_str());
 
         let too_many_bytes = [12u8; 256];
         let too_long_a_string = String::from_utf8_lossy(&too_many_bytes);
-        assert!(match PascalString::from(&too_long_a_string) {
+        assert!(match PascalString::from_str(&too_long_a_string) {
             Err(PascalStringCreateError::InputTooLong) => true,
             _ => false
         });
