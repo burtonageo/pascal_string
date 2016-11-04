@@ -1,6 +1,7 @@
 use std::borrow::{Cow, ToOwned};
 use std::ffi::{CStr, CString};
 use std::str;
+use ::utf8::PascalString;
 
 #[derive(Hash)]
 pub struct PascalStr {
@@ -50,6 +51,14 @@ impl PascalStr {
     #[inline]
     pub fn lines(&self) -> Lines {
         self.string.lines()
+    }
+}
+
+impl ToOwned for PascalStr {
+    type Owned = PascalString;
+    #[inline]
+    fn to_owned(&self) -> Self::Owned {
+        PascalString::from_str(self.as_str()).unwrap()
     }
 }
 
