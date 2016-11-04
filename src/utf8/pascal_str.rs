@@ -25,6 +25,11 @@ impl PascalStr {
     }
 
     #[inline]
+    pub fn as_mut_str(&mut self) -> &mut str {
+        &mut self.string
+    }
+
+    #[inline]
     pub fn as_bytes(&self) -> &[u8] {
         self.string.as_bytes()
     }
