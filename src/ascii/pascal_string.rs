@@ -15,7 +15,6 @@ use ::PASCAL_STRING_BUF_SIZE;
 /// the first byte storing the length.
 ///
 /// This string type uses Ascii encoding.
-#[derive(Eq)]
 pub struct PascalString {
     /// The length of this string.
     len: u8,
@@ -253,6 +252,8 @@ impl<S: AsRef<PascalStr> + ?Sized> PartialEq<S> for PascalString {
         self.chars().zip(other.chars()).all(|(c0, c1)| c0 == c1)
     }
 }
+
+impl Eq for PascalString {}
 
 impl Ord for PascalString {
     #[inline]
