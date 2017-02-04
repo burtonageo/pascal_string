@@ -245,8 +245,20 @@ impl Error for PascalStringAppendError {
     fn description(&self) -> &str {
         match *self {
             PascalStringAppendError::NoRoom => "there is no room for the string to be appended",
-            PascalStringAppendError::EncodeError(_) => "there was a problem encoding the character as utf8: {:?}"
+            PascalStringAppendError::EncodeError(_) => "there was a problem encoding the character as utf8"
         }
+    }
+
+    fn cause(&self) -> Option<&Error> {
+        // std::error::Error is not implemented for EncodeUtf8Error
+        /*
+        if let PascalStringAppendError::EncodeError(ref e) = *self {
+            Some(e)
+        } else {
+            None
+        }
+        */
+        None
     }
 }
 
