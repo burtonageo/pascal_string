@@ -243,43 +243,6 @@ impl Clone for PascalString {
     }
 }
 
-impl<S: AsRef<PascalStr> + ?Sized> PartialEq<S> for PascalString {
-    fn eq(&self, other: &S) -> bool {
-        let other = other.as_ref();
-        if self.len() != other.len() {
-            return false;
-        }
-        self.chars().zip(other.chars()).all(|(c0, c1)| c0 == c1)
-    }
-}
-
-impl Eq for PascalString {}
-
-impl Ord for PascalString {
-    #[inline]
-    fn cmp(&self, other: &Self) -> Ordering {
-        let ascii0: &[AsciiChar] = &self.chars;
-        let ascii1: &[AsciiChar] = &other.chars;
-        ascii0.cmp(ascii1)
-    }
-}
-
-impl<S: AsRef<PascalStr> + ?Sized> PartialOrd<S> for PascalString {
-    fn partial_cmp(&self, other: &S) -> Option<Ordering> {
-        let other: &AsciiStr = other.as_ref().as_ref();
-        let self_asciistr: &AsciiStr = self.as_ref();
-        self_asciistr.partial_cmp(&other)
-    }
-}
-
-impl Hash for PascalString {
-    #[inline]
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        state.write_u8(self.len);
-        state.write(self.as_ref());
-    }
-}
-
 impl AsciiExt for PascalString {
     type Owned = Self;
 
@@ -327,6 +290,32 @@ impl fmt::Debug for PascalString {
 impl fmt::Display for PascalString {
     fn fmt(&self, fmtr: &mut fmt::Formatter) -> fmt::Result {
         fmtr.pad(self.as_ref())
+    }
+}
+
+impl<S: AsRef<str> + ?Sized> PartialEq<S> for PascalString {
+    #[inline]
+    fn eq(&self, other: &S) -> bool {
+        let other = other.as_ref();
+        self.as_str() == other
+    }
+}
+
+impl Eq for PascalString { }
+
+impl<S: AsRef<str> + ?Sized> PartialOrd<S> for PascalString {
+    #[inline]
+    fn partial_cmp(&self, other: &S) -> Option<Ordering> {
+        let other = other.as_ref();
+        self.as_str().partial_cmp(&other)
+    }
+}
+
+impl Ord for PascalString {
+    #[inline]
+    fn cmp(&self, other: &PascalString) -> Ordering {
+        let other = other.as_ref();
+        self.as_str().cmp(other)
     }
 }
 

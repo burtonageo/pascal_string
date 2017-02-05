@@ -114,20 +114,6 @@ impl PascalStr {
     }
 }
 
-impl<S: AsRef<PascalStr> + ?Sized> PartialEq<S> for PascalStr {
-    fn eq(&self, other: &S) -> bool {
-        let other = other.as_ref();
-        self.string.eq(&other.string)
-    }
-}
-
-impl<S: AsRef<PascalStr> + ?Sized> PartialOrd<S> for PascalStr {
-    fn partial_cmp(&self, other: &S) -> Option<Ordering> {
-        let other = other.as_ref();
-        self.string.partial_cmp(&other.string)
-    }
-}
-
 impl AsciiExt for PascalStr {
     type Owned = PascalString;
 
@@ -171,6 +157,22 @@ impl fmt::Debug for PascalStr {
 impl fmt::Display for PascalStr {
     fn fmt(&self, fmtr: &mut fmt::Formatter) -> fmt::Result {
         fmtr.pad(self.as_ref())
+    }
+}
+
+impl<S: AsRef<str> + ?Sized> PartialEq<S> for PascalStr {
+    #[inline]
+    fn eq(&self, other: &S) -> bool {
+        let other = other.as_ref();
+        self.as_str() == other
+    }
+}
+
+impl<S: AsRef<str> + ?Sized> PartialOrd<S> for PascalStr {
+    #[inline]
+    fn partial_cmp(&self, other: &S) -> Option<Ordering> {
+        let other = other.as_ref();
+        self.as_str().partial_cmp(&other)
     }
 }
 

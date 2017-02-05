@@ -1,5 +1,5 @@
 use std::borrow::{Borrow, BorrowMut, Cow};
-use std::cmp::{Eq, PartialEq};
+use std::cmp::{Eq, PartialEq, Ord, Ordering, PartialOrd};
 use std::error::Error;
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
@@ -99,6 +99,21 @@ impl PascalString {
     }
 }
 
+impl fmt::Debug for PascalString {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.debug_struct("PascalString")
+            .field("len", &self.len)
+            .field("chars_buf", &self.as_str())
+            .finish()
+    }
+}
+
+impl fmt::Display for PascalString {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.pad(self.as_str())
+    }
+}
+
 impl Default for PascalString {
     #[inline]
     fn default() -> Self {
@@ -125,6 +140,31 @@ impl Hash for PascalString {
     fn hash<H: Hasher>(&self, state: &mut H) {
         state.write_u8(self.len);
         state.write(&self.chars_buf);
+    }
+}
+
+impl<S: AsRef<str> + ?Sized> PartialEq<S> for PascalString {
+    #[inline]
+    fn eq(&self, other: &S) -> bool {
+        let other = other.as_ref();
+        self.as_str() == other
+    }
+}
+
+impl Eq for PascalString {}
+
+impl<S: AsRef<str> + ?Sized> PartialOrd<S> for PascalString {
+    #[inline]
+    fn partial_cmp(&self, other: &S) -> Option<Ordering> {
+        let other = other.as_ref();
+        self.as_str().partial_cmp(&other)
+    }
+}
+
+impl Ord for PascalString {
+    #[inline]
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.as_str().cmp(other.as_str())
     }
 }
 
@@ -172,51 +212,17 @@ impl BorrowMut<PascalStr> for PascalString {
     }
 }
 
-impl Eq for PascalString { }
-
-impl PartialEq for PascalString {
+impl Borrow<str> for PascalString {
     #[inline]
-    fn eq(&self, other: &PascalString) -> bool {
-        self.as_str().eq(other.as_str())
+    fn borrow(&self) -> &str {
+        self.as_str()
     }
 }
 
-impl PartialEq<PascalStr> for PascalString {
+impl BorrowMut<str> for PascalString {
     #[inline]
-    fn eq(&self, other: &PascalStr) -> bool {
-        self.as_str().eq(other.as_str())
-    }
-}
-
-impl<'a> PartialEq<Cow<'a, PascalStr>> for PascalString {
-    #[inline]
-    fn eq(&self, other: &Cow<'a, PascalStr>) -> bool {
-        let other: &PascalStr = other.borrow();
-        let other: &str = other.as_str();
-        self.as_str().eq(other)
-    }
-}
-
-impl PartialEq<String> for PascalString {
-    #[inline]
-    fn eq(&self, other: &String) -> bool {
-        let other: &str = other.as_str();
-        self.as_str().eq(other)
-    }
-}
-
-impl PartialEq<str> for PascalString {
-    #[inline]
-    fn eq(&self, other: &str) -> bool {
-        self.as_str().eq(other)
-    }
-}
-
-impl<'a> PartialEq<Cow<'a, str>> for PascalString {
-    #[inline]
-    fn eq(&self, other: &Cow<'a, str>) -> bool {
-        let other: &str = other.borrow();
-        self.as_str().eq(other)
+    fn borrow_mut(&mut self) -> &mut str {
+        self.as_mut_str()
     }
 }
 

@@ -1,10 +1,11 @@
 use std::borrow::{Cow, ToOwned};
+use std::cmp::{Ordering, PartialEq, PartialOrd};
 use std::ffi::{CStr, CString};
 use std::str;
 use ::utf8::PascalString;
 use ::PASCAL_STRING_BUF_SIZE;
 
-#[derive(Hash)]
+#[derive(Hash, Eq, Ord)]
 pub struct PascalStr {
     string: str
 }
@@ -70,11 +71,34 @@ impl PascalStr {
     }
 }
 
+impl<S: AsRef<str> + ?Sized> PartialEq<S> for PascalStr {
+    #[inline]
+    fn eq(&self, other: &S) -> bool {
+        let other = other.as_ref();
+        self.as_str() == other
+    }
+}
+
+impl<S: AsRef<str> + ?Sized> PartialOrd<S> for PascalStr {
+    #[inline]
+    fn partial_cmp(&self, other: &S) -> Option<Ordering> {
+        let other = other.as_ref();
+        self.as_str().partial_cmp(&other)
+    }
+}
+
 impl ToOwned for PascalStr {
     type Owned = PascalString;
     #[inline]
     fn to_owned(&self) -> Self::Owned {
         PascalString::from_str(self.as_str()).unwrap()
+    }
+}
+
+impl AsRef<str> for PascalStr {
+    #[inline]
+    fn as_ref(&self) -> &str {
+        &self.string
     }
 }
 

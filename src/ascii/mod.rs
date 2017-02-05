@@ -36,7 +36,7 @@ mod tests {
         string.push('o');
         string.push(AsciiChar::Null);
 
-        assert_eq!(string.as_str(), "heLlLo\0");
+        assert_eq!(string, "heLlLo\0");
     }
 
     #[test]
@@ -44,7 +44,7 @@ mod tests {
         let mut string = PascalString::new();
         string.push_str("Hola, ");
         string.push_str("Senor!");
-        assert_eq!(string.as_str(), "Hola, Senor!");
+        assert_eq!(string, "Hola, Senor!");
     }
 
     #[test]
