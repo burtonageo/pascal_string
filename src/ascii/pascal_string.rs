@@ -282,12 +282,17 @@ impl AsciiExt for PascalString {
 }
 
 impl fmt::Debug for PascalString {
+    #[inline]
     fn fmt(&self, fmtr: &mut fmt::Formatter) -> fmt::Result {
-        write!(fmtr, "{}", self)
+        fmtr.debug_struct("PascalString")
+            .field("len", &self.len)
+            .field("chars_buf", &self.as_str())
+            .finish()
     }
 }
 
 impl fmt::Display for PascalString {
+    #[inline]
     fn fmt(&self, fmtr: &mut fmt::Formatter) -> fmt::Result {
         fmtr.pad(self.as_ref())
     }
@@ -321,6 +326,7 @@ impl Ord for PascalString {
 
 impl Deref for PascalString {
     type Target = PascalStr;
+    #[inline]
     fn deref(&self) -> &Self::Target {
         let ascii_str: &[AsciiChar] = self.as_ref();
         unsafe {
@@ -330,6 +336,7 @@ impl Deref for PascalString {
 }
 
 impl DerefMut for PascalString {
+    #[inline]
     fn deref_mut(&mut self) -> &mut Self::Target {
         let ascii_str: &mut [AsciiChar] = self.as_mut();
         unsafe {

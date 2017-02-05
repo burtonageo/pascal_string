@@ -100,8 +100,9 @@ impl PascalString {
 }
 
 impl fmt::Debug for PascalString {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.debug_struct("PascalString")
+    #[inline]
+    fn fmt(&self, fmtr: &mut fmt::Formatter) -> fmt::Result {
+        fmtr.debug_struct("PascalString")
             .field("len", &self.len)
             .field("chars_buf", &self.as_str())
             .finish()
@@ -109,8 +110,9 @@ impl fmt::Debug for PascalString {
 }
 
 impl fmt::Display for PascalString {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.pad(self.as_str())
+    #[inline]
+    fn fmt(&self, fmtr: &mut fmt::Formatter) -> fmt::Result {
+        fmtr.pad(self.as_str())
     }
 }
 
@@ -125,6 +127,7 @@ impl Default for PascalString {
 }
 
 impl Clone for PascalString {
+    #[inline]
     fn clone(&self) -> Self {
         let mut clone = PascalString::default();
         clone.len = self.len;
@@ -238,6 +241,7 @@ pub enum PascalStringAppendError {
 }
 
 impl fmt::Display for PascalStringAppendError {
+    #[inline]
     fn fmt(&self, fmtr: &mut fmt::Formatter) -> fmt::Result {
         let desc = self.description();
         match *self {
@@ -248,6 +252,7 @@ impl fmt::Display for PascalStringAppendError {
 }
 
 impl Error for PascalStringAppendError {
+    #[inline]
     fn description(&self) -> &str {
         match *self {
             PascalStringAppendError::NoRoom => "there is no room for the string to be appended",
@@ -255,6 +260,7 @@ impl Error for PascalStringAppendError {
         }
     }
 
+    #[inline]
     fn cause(&self) -> Option<&Error> {
         // std::error::Error is not implemented for EncodeUtf8Error
         /*
@@ -269,6 +275,7 @@ impl Error for PascalStringAppendError {
 }
 
 impl From<EncodeUtf8Error> for PascalStringAppendError {
+    #[inline]
     fn from(e: EncodeUtf8Error) -> Self {
         PascalStringAppendError::EncodeError(e)
     }
